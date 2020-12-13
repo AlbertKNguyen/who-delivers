@@ -1,6 +1,7 @@
-import App from "next/app";
-import type { AppProps /*, AppContext */ } from "next/app";
+import App from 'next/app';
+import type { AppProps /*, AppContext */ } from 'next/app';
 import { NextPage } from 'next';
+import 'semantic-ui-css/semantic.min.css';
 
 const MyApp: NextPage<AppProps> = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;
