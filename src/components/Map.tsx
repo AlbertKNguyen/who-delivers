@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  GoogleMap,
-  Marker,
-  StreetViewService,
-  useJsApiLoader,
-} from '@react-google-maps/api';
-import { Dimmer, Loader } from 'semantic-ui-react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 
 const containerStyle = {
   width: '600px',
@@ -35,20 +29,18 @@ export const Map = ({ addressLocation }: Props) => {
   useEffect(() => {
     if (addressLocation !== null) {
       const getNearbyRestaurants = async () => {
-        const res = await fetch(
-          `https://api.yelp.com/v3/businesses/search?latitude=${addressLocation.lat}&longitude=${addressLocation.lng}&radius=10000&limit=50`,
-          {
-            headers: new Headers({
-              Authorization: `Bearer ${process.env.YELP_KEY}`,
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }),
-            mode: "no-cors"
-          }
-        );
-        const data = await res.json();
-        console.log(data)
-      }
+        const request = new Request(`https://api.yelp.com/v3/businesses/search?latitude=${addressLocation.lat}&longitude=${addressLocation.lng}&radius=10000&limit=50`, {
+          method: 'GET',
+          mode: 'no-cors',
+          headers: new Headers({
+            Authorization: `Bearer ${process.env.YELP_KEY}`,
+            Host: '<calculated when request is sent></calculated>',
+          }),
+        })
+
+        const response = await fetch(request);
+        console.log(response);
+      };
 
       getNearbyRestaurants();
     }
