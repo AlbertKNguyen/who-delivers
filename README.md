@@ -3,7 +3,7 @@
 WhoDelivers is a food delivery search app that prioritizes a restaurant's own/preferred delivery service.
 
   - Built with React/Next.js, Typescript, and Google Maps API
-  - Data gathered Yelp, Google, etc (needs more data implementation)
+  - Data gathered from Yelp, Google, etc (need more data implementation)
 
 # To Do List
 
