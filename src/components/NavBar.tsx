@@ -1,29 +1,28 @@
-
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { AppLogo } from './AppLogo';
 import { AddressSearch } from './AddressSearch';
-import { Menu, Input, Container } from 'semantic-ui-react';
-import { useState, useEffect } from 'react';
-
-interface Location {
-    lat: number,
-    lng: number
-}
+import { Menu, Button } from 'semantic-ui-react';
+import { useState } from 'react';
 
 export const NavBar = () => {
   const locationPath = useRouter().pathname;
   const [activeItem] = useState<string>(locationPath);
-  const [addressLocation, setAddressLocation] = useState<Location | null>(null);
 
   return (
     <div>
       <Menu fixed='top' pointing secondary>
-        <Menu.Item header>
+        <Menu.Item as='a' href='/' header position='left'>
           <AppLogo />
         </Menu.Item>
 
-        <Menu.Item active={activeItem === '/'}>
+        {locationPath === '/' && (
+          <Menu.Item>
+            <AddressSearch />
+          </Menu.Item>
+        )}
+
+        <Menu.Item position='right' active={activeItem === '/'}>
           <Link href='/'>
             <a style={{ color: 'black' }}>Delivery Search</a>
           </Link>
@@ -33,10 +32,6 @@ export const NavBar = () => {
           <Link href='/about'>
             <a style={{ color: 'black' }}>About</a>
           </Link>
-        </Menu.Item>
-
-        <Menu.Item>
-          <AddressSearch setLocation={(location: Location) => console.log(location)}/>
         </Menu.Item>
       </Menu>
     </div>
