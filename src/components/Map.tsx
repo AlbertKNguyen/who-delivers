@@ -31,9 +31,8 @@ export const Map = ({ addressLocation }: Props) => {
       const getNearbyRestaurants = async () => {
         const request = new Request(`https://api.yelp.com/v3/businesses/search?latitude=${addressLocation.lat}&longitude=${addressLocation.lng}&radius=10000&limit=50`, {
           method: 'GET',
-          mode: 'no-cors',
           headers: new Headers({
-            Authorization: `Bearer ${process.env.YELP_KEY}`,
+            Authorization: `Bearer + ${process.env.YELP_KEY}`,
             Host: '<calculated when request is sent></calculated>',
           }),
         })
