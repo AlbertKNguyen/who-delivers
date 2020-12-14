@@ -61,6 +61,7 @@ export const Map = ({ addressLocation }: Props) => {
           
           const restaurant = placeData.data.result;
           tempRestaurantList.push(restaurant);
+          console.log(restaurant)
         }
         setIsLoading(false);
         setRestaurantList(tempRestaurantList);
