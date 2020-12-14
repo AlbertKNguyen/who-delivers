@@ -28,11 +28,11 @@ export const NavBar = () => {
           </Link>
         </Menu.Item>
 
-        <Menu.Item active={activeItem === '/about'}>
+        {/* <Menu.Item active={activeItem === '/about'}>
           <Link href='/about'>
             <a style={{ color: 'black' }}>About</a>
           </Link>
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     </div>
   );

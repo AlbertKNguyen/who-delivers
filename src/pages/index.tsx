@@ -28,8 +28,8 @@ const Home: NextPage = () => {
       <LocationContext.Provider value={setAddressLocation}>
         <NavBar />
       </LocationContext.Provider>
-      <Container style={{ marginTop: '44px' }}>
-        <Map addressLocation={addressLocation} />
+      <Container style={{ marginTop: '47px' }}>
+        <Map addressLocation={addressLocation}/>
       </Container>
     </div>
   );
