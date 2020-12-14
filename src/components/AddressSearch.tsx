@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import { Checkbox } from 'semantic-ui-react';
+import { LocationContext } from './LocationContext';
 
 interface Place {
   formatted_address: string;
@@ -12,18 +13,11 @@ interface Place {
   };
 }
 
-interface Location {
-  lat: number;
-  lng: number;
-}
-
-interface Props {
-  setLocation: (location: Location) => void;
-}
-
-export const AddressSearch = ({ setLocation }: Props) => {
+export const AddressSearch = () => {
   const [currentAddress, setCurrentAddress] = useState<string>();
   const [saveAddress, setSaveAddress] = useState<boolean>(true);
+
+  const setAddressLocation = useContext(LocationContext)
 
   // use localStorage to autofill address and initiate search
   useEffect(() => {
@@ -33,21 +27,23 @@ export const AddressSearch = ({ setLocation }: Props) => {
     const lng = localStorage.getItem('lng');
     if (address && lat && lng) {
       setCurrentAddress(address);
+
+      // Pass geolocation to Map through useContext
       const location = {
         lat: Number(lat),
         lng: Number(lng),
       };
-      setLocation(location);
+      setAddressLocation(location);
     }
-  });
+  }, []);
 
   const onPlaceSelected = (place: Place) => {
-    // Pass geolocation to parent component (Home)
+    // Pass geolocation to Map through useContext
     const location = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     };
-    setLocation(location);
+    setAddressLocation(location);
 
     // Save address and geolocation in localStorage
     if (saveAddress) {
@@ -60,6 +56,7 @@ export const AddressSearch = ({ setLocation }: Props) => {
 
   return (
     <div>
+
       <Autocomplete
         apiKey={process.env.GOOGLE_KEY}
         style={{ width: '350px', minWidth: '40%', maxWidth: '80%' }}

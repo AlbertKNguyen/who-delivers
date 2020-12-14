@@ -1,17 +1,36 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import { Container } from 'semantic-ui-react';
 import { NavBar } from '../components/NavBar';
+import { Map } from '../components/Map';
+import { useState } from 'react';
+import { LocationContext } from '../components/LocationContext';
+
+interface Location {
+  lat: number;
+  lng: number;
+}
 
 const Home: NextPage = () => {
+  const [addressLocation, setAddressLocation] = useState<Location | null>(null);
+
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
       <Head>
         <title>WhoDelivers | Delivery Search</title>
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+        <script
+          src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBCwGUHn9IOhJmZpWGbE0HDuWm6bO5le_o&libraries=places'
+          key='google'
+        ></script>
       </Head>
 
-      <NavBar />
+      <LocationContext.Provider value={setAddressLocation}>
+        <NavBar />
+      </LocationContext.Provider>
+      <Container style={{ marginTop: '44px' }}>
+        <Map addressLocation={addressLocation} />
+      </Container>
     </div>
   );
 };
