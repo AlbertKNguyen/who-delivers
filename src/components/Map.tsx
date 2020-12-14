@@ -51,18 +51,16 @@ export const Map = ({ addressLocation }: Props) => {
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
         const searchResponse = await axios.get(
-          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&keyword=order%20online&radius=5000&location=${addressLocation.lat},${addressLocation.lng}`
+          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=online%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
         );
 
         for (const place of searchResponse.data.results) {
           const placeData = await axios.get(
-            `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}`
+            `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photo,place_id,type,url,website`
           );
+          
           const restaurant = placeData.data.result;
-
-          if (restaurant.opening_hours.open_now) {
-            tempRestaurantList.push(restaurant);
-          }
+          tempRestaurantList.push(restaurant);
         }
         setIsLoading(false);
         setRestaurantList(tempRestaurantList);
