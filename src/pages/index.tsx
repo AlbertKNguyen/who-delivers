@@ -20,7 +20,7 @@ const Home: NextPage = () => {
         <title>WhoDelivers | Delivery Search</title>
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
         <script
-          src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBCwGUHn9IOhJmZpWGbE0HDuWm6bO5le_o&libraries=places'
+          src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAVquZnRTQVCiNYRzDz6-sujvARlhHzSc0&libraries=places'
           key='google'
         ></script>
       </Head>
