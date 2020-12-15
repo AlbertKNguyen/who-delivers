@@ -24,7 +24,7 @@ const Home: NextPage = () => {
           content='who delivers, whodelivers, who delivers near me, delivery near me, delivery search, local restaurant delivery, restaurant delivery'
         />
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-        <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_KEY}&libraries=places`} key='google'></script>}
+        <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_KEY}&libraries=places`} key='google'></script>
       </Head>
 
       <LocationContext.Provider value={setAddressLocation}>
