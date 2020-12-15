@@ -11,7 +11,7 @@ export const NavBar = () => {
 
   return (
     <div>
-      <Menu fixed='top' pointing secondary>
+      <Menu fixed='top' pointing secondary style={{ background: 'white' }}>
         <Menu.Item as='a' href='/' header position='left'>
           <AppLogo />
         </Menu.Item>
