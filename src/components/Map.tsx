@@ -54,14 +54,16 @@ export const Map = ({ addressLocation }: Props) => {
           `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=online%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
         );
 
+        console.log(searchResponse.data.results);
+
         for (const place of searchResponse.data.results) {
           const placeData = await axios.get(
             `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photo,place_id,type,url,website`
           );
-          
+
           const restaurant = placeData.data.result;
           tempRestaurantList.push(restaurant);
-          console.log(restaurant)
+          console.log(restaurant);
         }
         setIsLoading(false);
         setRestaurantList(tempRestaurantList);
@@ -73,49 +75,57 @@ export const Map = ({ addressLocation }: Props) => {
 
   const renderMap = () => {
     return (
-      <div>
-        {!isLoading ? (
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={13}
-            options={mapOptions}
-          >
-            <Marker position={addressLocation} title='Home' />
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={13}
+        options={mapOptions}
+      >
+        <Marker position={addressLocation} title='Home' />
 
-            {restaurantList.map((restaurant) => {
-              return (
-                <Marker
-                  key={restaurant.place_id}
-                  position={restaurant.geometry.location}
-                  label={{ text: restaurant.name, fontSize: '12px' }}
-                  icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
-                  onClick={() => {
-                    setInfoWindow({
-                      open: true,
-                      name: restaurant.name,
-                      website: restaurant.website,
-                      location: restaurant.geometry.location,
-                    });
-                  }}
-                />
-              );
-            })}
-            {infoWindow.open && (
-              <InfoWindow position={infoWindow.location}>
-                <div>
-                  {infoWindow.name}:{' '}
-                  <a href={infoWindow.website}>{infoWindow.website}</a>
-                </div>
-              </InfoWindow>
-            )}
-          </GoogleMap>
-        ) : (
-          <Loader active> </Loader>
+        {restaurantList.map((restaurant) => {
+          return (
+            <Marker
+              key={restaurant.place_id}
+              position={restaurant.geometry.location}
+              label={{ text: restaurant.name, fontSize: '12px' }}
+              icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
+              onClick={() => {
+                setInfoWindow({
+                  open: true,
+                  name: restaurant.name,
+                  website: restaurant.website,
+                  location: restaurant.geometry.location,
+                });
+              }}
+            />
+          );
+        })}
+        {infoWindow.open && (
+          <InfoWindow position={infoWindow.location}>
+            <div>
+              {infoWindow.name}:{' '}
+              <a href={infoWindow.website}>{infoWindow.website}</a>
+            </div>
+          </InfoWindow>
         )}
-      </div>
+      </GoogleMap>
     );
   };
 
-  return renderMap();
+  return (
+    <div>
+      {addressLocation !== null  ? (
+        <div>
+          {!isLoading ? (
+            renderMap()
+          ) : (
+            <Loader active></Loader>
+          )}
+        </div>
+      ) : (
+        <div></div>
+      )}
+    </div>
+  );
 };
