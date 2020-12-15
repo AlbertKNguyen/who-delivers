@@ -54,7 +54,7 @@ export const Map = ({ addressLocation }: Props) => {
           `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=online%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
         );
 
-        console.log(searchResponse.data.results);
+        console.log(searchResponse);
 
         for (const place of searchResponse.data.results) {
           const placeData = await axios.get(
