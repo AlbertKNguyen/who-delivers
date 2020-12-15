@@ -1,9 +1,9 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { Container } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { NavBar } from '../components/NavBar';
 import { Map } from '../components/Map';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { LocationContext } from '../components/LocationContext';
 
 interface Location {
@@ -18,19 +18,26 @@ const Home: NextPage = () => {
     <div style={{ display: 'flex' }}>
       <Head>
         <title>WhoDelivers | Delivery Search</title>
+        <meta name='description' content='Local restaurants that deliver' />
+        <meta
+          name='keywords'
+          content='who delivers, whodelivers, who delivers near me, delivery near me, delivery search, local restaurant delivery, restaurant delivery'
+        />
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-        <script
-          src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAVquZnRTQVCiNYRzDz6-sujvARlhHzSc0&libraries=places'
-          key='google'
-        ></script>
+        <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_KEY}&libraries=places`} key='google'></script>}
       </Head>
 
       <LocationContext.Provider value={setAddressLocation}>
         <NavBar />
       </LocationContext.Provider>
-      <Container style={{ marginTop: '47px' }}>
-        <Map addressLocation={addressLocation}/>
-      </Container>
+      <Grid
+        centered
+        container
+        verticalAlign='middle'
+        style={{ margin: '47px 0px 0px 0px' }}
+      >
+        <Map addressLocation={addressLocation} />
+      </Grid>
     </div>
   );
 };

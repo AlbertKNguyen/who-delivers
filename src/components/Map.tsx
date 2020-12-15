@@ -5,8 +5,8 @@ import { render } from 'react-dom';
 const axios = require('axios').default;
 
 const containerStyle = {
-  width: '1100px',
-  height: '1200px',
+  width: '1280px',
+  height: '2160px',
   maxWidth: '100vw',
   maxHeight: 'calc(100vh - 47px)',
 };
@@ -51,7 +51,7 @@ export const Map = ({ addressLocation }: Props) => {
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
         const searchResponse = await axios.get(
-          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=online%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
+          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=order%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
         );
 
         console.log(searchResponse);
@@ -78,7 +78,7 @@ export const Map = ({ addressLocation }: Props) => {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={13}
+        zoom={14}
         options={mapOptions}
       >
         <Marker position={addressLocation} title='Home' />
@@ -104,7 +104,7 @@ export const Map = ({ addressLocation }: Props) => {
         {infoWindow.open && (
           <InfoWindow position={infoWindow.location}>
             <div>
-              {infoWindow.name}:{' '}
+              {infoWindow.name}<br />
               <a href={infoWindow.website}>{infoWindow.website}</a>
             </div>
           </InfoWindow>
