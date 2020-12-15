@@ -120,7 +120,7 @@ export const Map = ({ addressLocation }: Props) => {
           {!isLoading ? (
             renderMap()
           ) : (
-            <Loader active></Loader>
+            <Loader active>Loading restaurants...</Loader>
           )}
         </div>
       ) : (
