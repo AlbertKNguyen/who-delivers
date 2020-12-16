@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
-import { Dimmer, Loader } from 'semantic-ui-react';
-import { render } from 'react-dom';
+import { Loader } from 'semantic-ui-react';
 const axios = require('axios').default;
 
 const containerStyle = {
@@ -43,28 +42,57 @@ export const Map = ({ addressLocation }: Props) => {
     location: null,
   });
   let tempRestaurantList = [];
+  let errorOccured = false;
 
   useEffect(() => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
 
+      (async () => {
+        const response = await axios.get('/api/urls', {
+          params: {
+            url:
+              'https://www.google.com/search?hl=en&q=hella%20halal%20daly%20city',
+          },
+        });
+      })();
+
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
-        const searchResponse = await axios.get(
-          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=order%20delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
-        );
 
-        console.log(searchResponse);
+        let searchResponse;
+        let pageToken = 'pagetoken';
+        let pages = 1;
 
-        for (const place of searchResponse.data.results) {
-          const placeData = await axios.get(
-            `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photo,place_id,type,url,website`
-          );
+        while (pageToken && pages <= 3) {
+          try {
+            if (pages === 1) {
+              searchResponse = await axios.get(
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=order%20online&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
+              );
+            } else {
+              searchResponse = await axios.get(
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken${pageToken}`
+              );
+            }
 
-          const restaurant = placeData.data.result;
-          tempRestaurantList.push(restaurant);
-          console.log(restaurant);
+            for (const place of searchResponse.data.results) {
+              const placeData = await axios.get(
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photo,place_id,type,url,website`
+              );
+
+              const restaurant = placeData.data.result;
+              tempRestaurantList.push(restaurant);
+            }
+
+            pageToken = searchResponse.data.next_page_token;
+            pages++;
+          } catch (error) {
+            errorOccured = false;
+            console.log(error.response);
+          }
         }
+
         setIsLoading(false);
         setRestaurantList(tempRestaurantList);
       };
@@ -102,9 +130,20 @@ export const Map = ({ addressLocation }: Props) => {
           );
         })}
         {infoWindow.open && (
-          <InfoWindow position={infoWindow.location}>
+          <InfoWindow
+            position={infoWindow.location}
+            onCloseClick={() => {
+              setInfoWindow({
+                open: false,
+                name: '',
+                website: '',
+                location: null,
+              });
+            }}
+          >
             <div>
-              {infoWindow.name}<br />
+              {infoWindow.name}
+              <br />
               <a href={infoWindow.website}>{infoWindow.website}</a>
             </div>
           </InfoWindow>
@@ -115,16 +154,34 @@ export const Map = ({ addressLocation }: Props) => {
 
   return (
     <div>
-      {addressLocation !== null  ? (
+      {addressLocation !== null ? (
         <div>
           {!isLoading ? (
-            renderMap()
+            <div>
+              {restaurantList.length > 0 ? (
+                renderMap()
+              ) : (
+                <div style={{ marginTop: '40vh' }}>
+                  {errorOccured ? (
+                    <h1>
+                      Error occured.
+                      <br />
+                      Try refreshing the page.
+                    </h1>
+                  ) : (
+                    <h1>No restaurants found.</h1>
+                  )}
+                </div>
+              )}
+            </div>
           ) : (
-            <Loader active>Loading restaurants...</Loader>
+            <Loader active>Finding restaurants...</Loader>
           )}
         </div>
       ) : (
-        <div></div>
+        <h1 style={{ marginTop: '40vh' }}>
+          Enter your address to start searching.
+        </h1>
       )}
     </div>
   );
