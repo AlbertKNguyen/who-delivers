@@ -7,7 +7,7 @@ WhoDelivers is a food delivery search app that prioritizes a restaurant's own/pr
 
 # To Do List
 
-  - Web scrape sites like Google and Yelp to find preferred delivery service
+  - Implement function to find preferred delivery service
   - Implement own (graphQL) API to temporarily cache restaurant data
   - Optimize web experience
   - Implement mobile experience
