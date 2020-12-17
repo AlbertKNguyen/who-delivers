@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
 import { Loader } from 'semantic-ui-react';
+import Image from 'next/image';
 const axios = require('axios').default;
 
 const containerStyle = {
@@ -23,7 +24,8 @@ interface Location {
 interface infoWindow {
   open: boolean;
   name: string;
-  website: string;
+  urls: string[];
+  imageURL: string;
   location: Location;
 }
 
@@ -38,66 +40,105 @@ export const Map = ({ addressLocation }: Props) => {
   const [infoWindow, setInfoWindow] = useState<infoWindow>({
     open: false,
     name: '',
-    website: '',
+    urls: [],
+    imageURL: '',
     location: null,
   });
-  let tempRestaurantList = [];
-  let errorOccured = false;
+  const [errorOccured, setErrorOccured] = useState<boolean>(false);
+
+  const getRestaurantsURLs = async (searchTerm) => {
+    const { data } = await axios.get('/api/urls', {
+      params: {
+        search: searchTerm,
+      },
+    });
+    return data.urls;
+  };
+
+  const getRestaurantsDetails = async (searchResults) => {
+    const promisedDetails = searchResults.map(async (place) => {
+      if (!place.name.includes('pizza')) {
+        const placeData = await axios.get(
+          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`
+        );
+        const placeDetail = placeData.data.result;
+        placeDetail.urls = place.urls;
+        return placeDetail;
+      }
+    });
+    return Promise.all(promisedDetails);
+  };
 
   useEffect(() => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
 
-      (async () => {
-        const response = await axios.get('/api/urls', {
-          params: {
-            url:
-              'https://www.google.com/search?hl=en&q=hella%20halal%20daly%20city',
-          },
-        });
-      })();
-
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
 
         let searchResponse;
-        let pageToken = 'pagetoken';
         let pages = 1;
-
+        let pageToken = 'pagetoken';
+        let tempRestaurantList = [];
         while (pageToken && pages <= 3) {
           try {
-            if (pages === 1) {
+            if (pages === 1 || pages === 1) {
               searchResponse = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=order%20online&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=delivery&radius=10000&location=${addressLocation.lat},${addressLocation.lng}opennow`
               );
             } else {
               searchResponse = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken${pageToken}`
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
               );
             }
 
-            for (const place of searchResponse.data.results) {
-              const placeData = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photo,place_id,type,url,website`
-              );
+            let searchResults = searchResponse.data.results;
 
-              const restaurant = placeData.data.result;
-              tempRestaurantList.push(restaurant);
-            }
+            searchResults = await (async () => {
+              return await searchResults.reduce(
+                async (promisedResult: any, place: any) => {
+                  let results = await promisedResult;
+                  if (!place.name.includes('Pizz')) {
+                    const urlList = await getRestaurantsURLs(
+                      `${place.name} ${place.formatted_address}`
+                    );
+                    if (urlList.length > 0) {
+                      place.urls = urlList;
+                      results.push(place);
+                    }
+                  }
+                  return results;
+                },
+                Promise.resolve([])
+              );
+            })();
+
+            tempRestaurantList = [
+              ...tempRestaurantList,
+              ...(await getRestaurantsDetails(searchResults)),
+            ];
 
             pageToken = searchResponse.data.next_page_token;
             pages++;
           } catch (error) {
-            errorOccured = false;
-            console.log(error.response);
+            setErrorOccured(true);
+            console.log(error);
+            pages++;
           }
         }
 
-        setIsLoading(false);
-        setRestaurantList(tempRestaurantList);
+        return tempRestaurantList;
       };
 
-      getNearbyRestaurants();
+      (async () => {
+        setRestaurantList(await getNearbyRestaurants());
+        setRestaurantList(
+          restaurantList.filter((restaurant) => {
+            return restaurant !== undefined;
+          })
+        );
+        setIsLoading(false);
+      })();
     }
   }, [addressLocation]);
 
@@ -122,7 +163,8 @@ export const Map = ({ addressLocation }: Props) => {
                 setInfoWindow({
                   open: true,
                   name: restaurant.name,
-                  website: restaurant.website,
+                  urls: restaurant.urls,
+                  imageURL: '',
                   location: restaurant.geometry.location,
                 });
               }}
@@ -136,15 +178,25 @@ export const Map = ({ addressLocation }: Props) => {
               setInfoWindow({
                 open: false,
                 name: '',
-                website: '',
+                urls: [],
+                imageURL: '',
                 location: null,
               });
             }}
           >
             <div>
+              {/* <Image src={infoWindow.imageURL} width={300} height={300} /> */}
               {infoWindow.name}
-              <br />
-              <a href={infoWindow.website}>{infoWindow.website}</a>
+              {infoWindow.urls.map((url, index) => {
+                return (
+                  <div>
+                    <br />
+                    <a target='_blank' rel='noopener noreferrer' href={url}>
+                      {index === 0 ? <div>*{url}</div> : <div>{url}</div>}
+                    </a>
+                  </div>
+                );
+              })}
             </div>
           </InfoWindow>
         )}
