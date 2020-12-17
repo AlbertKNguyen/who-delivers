@@ -24,7 +24,10 @@ const Home: NextPage = () => {
           content='who delivers, whodelivers, who delivers near me, delivery near me, delivery search, local restaurant delivery, restaurant delivery'
         />
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-        <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_KEY}&libraries=places`} key='google'></script>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_KEY}&libraries=places`}
+          key='google'
+        ></script>
       </Head>
 
       <LocationContext.Provider value={setAddressLocation}>
@@ -38,6 +41,15 @@ const Home: NextPage = () => {
       >
         <Map addressLocation={addressLocation} />
       </Grid>
+      <p
+        style={{
+          position: 'absolute',
+          marginTop: 'calc(100vh - 25px)',
+          marginLeft: '5px',
+        }}
+      >
+        *Pizza not included
+      </p>
     </div>
   );
 };
