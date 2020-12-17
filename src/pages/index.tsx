@@ -43,9 +43,9 @@ const Home: NextPage = () => {
       </Grid>
       <p
         style={{
-          position: 'relative',
+          position: 'absolute',
           marginTop: 'calc(100vh - 25px)',
-          marginRight: '5px',
+          marginLeft: '5px',
         }}
       >
         *Pizza not included
