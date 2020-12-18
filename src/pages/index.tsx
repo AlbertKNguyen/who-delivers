@@ -33,14 +33,16 @@ const Home: NextPage = () => {
       <LocationContext.Provider value={setAddressLocation}>
         <NavBar />
       </LocationContext.Provider>
-      <Grid
-        centered
-        container
-        verticalAlign='middle'
-        style={{ margin: '47px 0px 0px 0px' }}
+      <div
+        style={{  
+        position: 'absolute',
+        left: '50%',
+        top: 'calc(50% + 23px)',
+        WebkitTransform: 'translate(-50%, -50%)',
+        transform: 'translate(-50%, -50%)' }}
       >
         <Map addressLocation={addressLocation} />
-      </Grid>
+      </div>
       <p
         style={{
           position: 'absolute',
