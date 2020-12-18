@@ -22,16 +22,14 @@ export const AddressSearch = () => {
   // use localStorage to autofill address and initiate search
   useEffect(() => {
     const localStorage = window.localStorage;
-    const address = localStorage.getItem('address');
-    const lat = localStorage.getItem('lat');
-    const lng = localStorage.getItem('lng');
-    if (address && lat && lng) {
-      setCurrentAddress(address);
+    const address = JSON.parse(localStorage.getItem('address'));
+    if (address) {
+      setCurrentAddress(address.name);
 
       // Pass geolocation to Map through useContext
       const location = {
-        lat: Number(lat),
-        lng: Number(lng),
+        lat: Number(address.location.lat),
+        lng: Number(address.location.lng),
       };
       setAddressLocation(location);
     }
@@ -47,16 +45,17 @@ export const AddressSearch = () => {
 
     // Save address and geolocation in localStorage
     if (saveAddress) {
+      const address = {
+        name: place.formatted_address,
+        location: location
+      }
       const localStorage = window.localStorage;
-      localStorage.setItem('address', place.formatted_address);
-      localStorage.setItem('lat', location.lat.toString());
-      localStorage.setItem('lng', location.lng.toString());
+      localStorage.setItem('address', JSON.stringify(address));
     }
   };
 
   return (
     <div>
-
       <Autocomplete
         apiKey={process.env.GOOGLE_KEY}
         style={{ width: '350px', minWidth: '40%', maxWidth: '80%' }}

@@ -6,6 +6,14 @@ import { Map } from '../components/Map';
 import React, { useState } from 'react';
 import { LocationContext } from '../components/LocationContext';
 
+const centerStyle = {
+  position: 'absolute',
+  left: '50%',
+  top: 'calc(50% + 23px)',
+  WebkitTransform: 'translate(-50%, -50%)',
+  transform: 'translate(-50%, -50%)',
+} as React.CSSProperties;
+
 interface Location {
   lat: number;
   lng: number;
@@ -33,14 +41,9 @@ const Home: NextPage = () => {
       <LocationContext.Provider value={setAddressLocation}>
         <NavBar />
       </LocationContext.Provider>
-      <Grid
-        centered
-        container
-        verticalAlign='middle'
-        style={{ margin: '47px 0px 0px 0px' }}
-      >
+      <div style={centerStyle}>
         <Map addressLocation={addressLocation} />
-      </Grid>
+      </div>
       <p
         style={{
           position: 'absolute',

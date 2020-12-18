@@ -6,7 +6,7 @@ const axios = require('axios').default;
 
 const containerStyle = {
   width: '1280px',
-  height: '2160px',
+  height: 'calc(100vh - 47px)',
   maxWidth: '100vw',
   maxHeight: 'calc(100vh - 47px)',
 };
@@ -73,6 +73,14 @@ export const Map = ({ addressLocation }: Props) => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
 
+      setInfoWindow({
+        open: false,
+        name: '',
+        urls: [],
+        imageURL: '',
+        location: null,
+      });
+
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
 
@@ -82,9 +90,9 @@ export const Map = ({ addressLocation }: Props) => {
         let tempRestaurantList = [];
         while (pageToken && pages <= 3) {
           try {
-            if (pages === 1 || pages === 1) {
+            if (pages === 1) {
               searchResponse = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=delivery&radius=10000&location=${addressLocation.lat},${addressLocation.lng}opennow`
+                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
               );
             } else {
               searchResponse = await axios.get(
@@ -92,31 +100,26 @@ export const Map = ({ addressLocation }: Props) => {
               );
             }
 
-            let searchResults = searchResponse.data.results;
+            // No Pizza
+            let searchResults = searchResponse.data.results.filter((place) => {
+              return !place.name.toLowerCase().includes('pizz');
+            });
 
-            searchResults = await (async () => {
-              return await searchResults.reduce(
-                async (promisedResult: any, place: any) => {
-                  let results = await promisedResult;
-                  if (!place.name.includes('Pizz')) {
-                    const urlList = await getRestaurantsURLs(
-                      `${place.name} ${place.formatted_address}`
-                    );
-                    if (urlList.length > 0) {
-                      place.urls = urlList;
-                      results.push(place);
-                    }
-                  }
-                  return results;
-                },
-                Promise.resolve([])
-              );
-            })();
+            // Get urls
+            searchResults = await Promise.all(
+              searchResults.map(async (place) => {
+                const urlList = await getRestaurantsURLs(
+                  `${place.name} ${place.formatted_address}`
+                );
+                if (urlList.length > 0) {
+                  place.urls = urlList;
+                }
+                return place;
+              })
+            );
 
-            tempRestaurantList = [
-              ...tempRestaurantList,
-              ...(await getRestaurantsDetails(searchResults)),
-            ];
+            // Add to list
+            tempRestaurantList = [...tempRestaurantList, ...searchResults];
 
             pageToken = searchResponse.data.next_page_token;
             pages++;
@@ -132,11 +135,6 @@ export const Map = ({ addressLocation }: Props) => {
 
       (async () => {
         setRestaurantList(await getNearbyRestaurants());
-        setRestaurantList(
-          restaurantList.filter((restaurant) => {
-            return restaurant !== undefined;
-          })
-        );
         setIsLoading(false);
       })();
     }
@@ -213,7 +211,7 @@ export const Map = ({ addressLocation }: Props) => {
               {restaurantList.length > 0 ? (
                 renderMap()
               ) : (
-                <div style={{ marginTop: '40vh' }}>
+                <div>
                   {errorOccured ? (
                     <h1>
                       Error occured.
@@ -231,7 +229,7 @@ export const Map = ({ addressLocation }: Props) => {
           )}
         </div>
       ) : (
-        <h1 style={{ marginTop: '40vh' }}>
+        <h1>
           Enter your address to start searching.
         </h1>
       )}
