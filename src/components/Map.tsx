@@ -6,7 +6,7 @@ const axios = require('axios').default;
 
 const containerStyle = {
   width: '1280px',
-  height: '2160px',
+  height: 'calc(100vh - 47px)',
   maxWidth: '100vw',
   maxHeight: 'calc(100vh - 47px)',
 };
@@ -102,7 +102,7 @@ export const Map = ({ addressLocation }: Props) => {
 
             // No Pizza
             let searchResults = searchResponse.data.results.filter((place) => {
-              return !place.name.includes('Pizz');
+              return !place.name.toLowerCase().includes('pizz');
             });
 
             // Get urls
