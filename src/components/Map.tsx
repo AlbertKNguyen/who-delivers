@@ -211,7 +211,7 @@ export const Map = ({ addressLocation }: Props) => {
               {restaurantList.length > 0 ? (
                 renderMap()
               ) : (
-                <div style={{ marginTop: '40vh' }}>
+                <div>
                   {errorOccured ? (
                     <h1>
                       Error occured.
@@ -229,7 +229,7 @@ export const Map = ({ addressLocation }: Props) => {
           )}
         </div>
       ) : (
-        <h1 style={{ marginTop: '40vh' }}>
+        <h1>
           Enter your address to start searching.
         </h1>
       )}
