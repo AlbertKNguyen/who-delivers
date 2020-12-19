@@ -44,15 +44,6 @@ const Home: NextPage = () => {
       <div style={centerStyle}>
         <Map addressLocation={addressLocation} />
       </div>
-      <p
-        style={{
-          position: 'absolute',
-          marginTop: 'calc(100vh - 25px)',
-          marginLeft: '5px',
-        }}
-      >
-        *Pizza not included
-      </p>
     </div>
   );
 };

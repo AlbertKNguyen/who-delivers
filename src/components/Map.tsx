@@ -99,12 +99,8 @@ export const Map = ({ addressLocation }: Props) => {
                 `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
               );
             }
-
-            // No Pizza
-            let searchResults = searchResponse.data.results.filter((place) => {
-              return !place.name.toLowerCase().includes('pizz');
-            });
-
+            
+            let searchResults = searchResponse.data.results
             // Get urls
             searchResults = await Promise.all(
               searchResults.map(async (place) => {
