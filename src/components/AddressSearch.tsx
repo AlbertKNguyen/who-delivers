@@ -22,16 +22,21 @@ export const AddressSearch = () => {
   // use localStorage to autofill address and initiate search
   useEffect(() => {
     const localStorage = window.localStorage;
-    const address = JSON.parse(localStorage.getItem('address'));
-    if (address) {
-      setCurrentAddress(address.name);
-
-      // Pass geolocation to Map through useContext
-      const location = {
-        lat: Number(address.location.lat),
-        lng: Number(address.location.lng),
-      };
-      setAddressLocation(location);
+    try {
+      const address = JSON.parse(localStorage.getItem('address'));
+      if (address) {
+        setCurrentAddress(address.name);
+  
+        // Pass geolocation to Map through useContext
+        const location = {
+          lat: Number(address.location.lat),
+          lng: Number(address.location.lng),
+        };
+        setAddressLocation(location);
+      }
+    } catch (error) {
+      console.log(error);
+      localStorage.clear();
     }
   }, []);
 

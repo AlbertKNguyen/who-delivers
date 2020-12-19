@@ -46,10 +46,12 @@ export const Map = ({ addressLocation }: Props) => {
   });
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
 
-  const getRestaurantsURLs = async (searchTerm) => {
+  const getRestaurantsURLs = async (place_id, searchTerm) => {
     const { data } = await axios.get('/api/urls', {
       params: {
+        place_id: place_id,
         search: searchTerm,
+        key: process.env.SECRET_KEY,
       },
     });
     return data.urls;
@@ -99,19 +101,26 @@ export const Map = ({ addressLocation }: Props) => {
                 `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
               );
             }
-            
-            let searchResults = searchResponse.data.results
+
+            let searchResults = searchResponse.data.results;
             // Get urls
-            searchResults = await Promise.all(
-              searchResults.map(async (place) => {
+            searchResults = await searchResults.reduce(
+              async (promisedResults, place) => {
+                await new Promise((r) =>
+                  setTimeout(r, Math.floor(Math.random() * 5000))
+                );
                 const urlList = await getRestaurantsURLs(
+                  place.place_id,
                   `${place.name} ${place.formatted_address}`
                 );
+
                 if (urlList.length > 0) {
                   place.urls = urlList;
+                  (await promisedResults).push(place);
                 }
-                return place;
-              })
+                return promisedResults;
+              },
+              Promise.resolve([])
             );
 
             // Add to list
@@ -225,9 +234,7 @@ export const Map = ({ addressLocation }: Props) => {
           )}
         </div>
       ) : (
-        <h1>
-          Enter your address to start searching.
-        </h1>
+        <h1>Enter your address to start searching.</h1>
       )}
     </div>
   );

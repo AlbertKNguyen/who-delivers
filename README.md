@@ -4,7 +4,7 @@ WhoDelivers is a food delivery search app that prioritizes a restaurant's own/pr
 
   - Built with React/Next.js, Typescript, and Google Maps API
 
-# To Do List
+### To Do List
 
   - Implement function to find preferred delivery service
     - Restaurant urls from google ✔️
@@ -12,3 +12,15 @@ WhoDelivers is a food delivery search app that prioritizes a restaurant's own/pr
   - Responsive design/mobile experience
   - Add '/about' page
   - Add search filters
+
+## How to run locally
+1. Clone repository:  
+```git clone https://github.com/AlbertKNguyen/who-delivers.git```
+2. Install dependencies:  
+```npm install``` or  
+```yarn install```  
+3. Run the development server:  
+```npm run dev```  
+4. Launch in your browser:  
+http://localhost:3000
+
