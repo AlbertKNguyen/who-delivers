@@ -1,5 +1,5 @@
 import cheerio from 'cheerio';
-import axios from 'axios';
+import axios from 'axios-https-proxy-fix';
 
 let client;
 
@@ -8,6 +8,7 @@ interface Request {
   query: {
     place_id: string;
     search: string;
+    key: string;
   };
 }
 
@@ -19,47 +20,51 @@ const config = {
 };
 
 export default async (req: Request, res) => {
-  if (req.method === 'GET') {
-    try {
-      const url = `https://www.google.com/search?hl=en&q=${req.query.search}`;
-      let data;
-      data = (await axios.get(url, config)).data;
-      const $ = cheerio.load(data);
+  if (req.query.key === process.env.SECRET_KEY) {
+    if (req.method === 'GET') {
+      try {
+        const url = `https://www.google.com/search?hl=en&q=${req.query.search}`;
+        const { data } = await axios.get(url, config);
+        const $ = cheerio.load(data);
 
-      let url_list: string[] = [];
-      const links = $('a');
-      $($('a')).each((i, link) => {
-        const link_title = $(link).text();
+        let url_list: string[] = [];
+        const links = $('a');
+        $($('a')).each((i, link) => {
+          const link_title = $(link).text();
 
-        if (
-          link_title.includes('Delivery') ||
-          link_title.includes('Order') ||
-          link_title.includes('Website')
-        ) {
-          let website_url: string;
-          const href = $(link).attr('href');
+          if (
+            link_title.includes('Delivery') ||
+            link_title.includes('Order') ||
+            link_title.includes('Website')
+          ) {
+            let website_url: string;
+            const href = $(link).attr('href');
 
-          if (!href.includes('yelp') && href.includes('http')) {
-            if (href.startsWith('http')) {
-              website_url = href;
-            } else {
-              website_url = href.substr(
-                7,
-                $(link).attr('href').indexOf('&sa') - 7
-              );
+            if (!href.includes('yelp') && href.includes('http')) {
+              if (href.startsWith('http')) {
+                website_url = href;
+              } else {
+                website_url = href.substr(
+                  7,
+                  $(link).attr('href').indexOf('&sa') - 7
+                );
+              }
+
+              url_list = Array.from(new Set([...url_list, website_url]));
             }
-
-            url_list = Array.from(new Set([...url_list, website_url]));
           }
-        }
-      });
+        });
 
-      res.status(200).json({ urls: url_list });
-    } catch {
-      res.status(500).json({ message: 'Error when retrieving data' });
+        res.status(200).json({ urls: url_list });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error when retrieving data' });
+      }
+    } else {
+      res.status(400).json({ message: 'invalid_request_type' });
     }
   } else {
-    res.status(400).json({ status: 'invalid_request_type' });
+    res.status(401).json({ message: 'invalid_key' });
   }
 };
 

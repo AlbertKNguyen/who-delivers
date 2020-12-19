@@ -50,7 +50,8 @@ export const Map = ({ addressLocation }: Props) => {
     const { data } = await axios.get('/api/urls', {
       params: {
         place_id: place_id,
-        search: searchTerm
+        search: searchTerm,
+        key: process.env.SECRET_KEY
       },
     });
     return data.urls;
@@ -103,23 +104,17 @@ export const Map = ({ addressLocation }: Props) => {
 
             let searchResults = searchResponse.data.results;
             // Get urls
-            searchResults = await Promise.all(
-              searchResults.map(async (place) => {
-                const urlList = await getRestaurantsURLs(
-                  place.place_id,
-                  `${place.name} ${place.formatted_address}`
-                );
-                if (urlList.length > 0) {
-                  place.urls = urlList;
-                  return place;
-                } else {
-                  return null;
-                }
-              })
-            );
-            searchResults = searchResults.filter((place) => {
-              return place !== null;
-            })
+            searchResults = await searchResults.reduce(async (promisedResults, place) => {
+              const urlList = await getRestaurantsURLs(
+                place.place_id,
+                `${place.name} ${place.formatted_address}`
+              );
+              if (urlList.length > 0) {
+                place.urls = urlList;
+                (await promisedResults).push(place);
+              } 
+              return promisedResults;
+            }, Promise.resolve([]));
 
             // Add to list
             tempRestaurantList = [...tempRestaurantList, ...searchResults];
