@@ -51,7 +51,7 @@ export const Map = ({ addressLocation }: Props) => {
       params: {
         place_id: place_id,
         search: searchTerm,
-        key: process.env.SECRET_KEY
+        key: process.env.SECRET_KEY,
       },
     });
     return data.urls;
@@ -104,17 +104,24 @@ export const Map = ({ addressLocation }: Props) => {
 
             let searchResults = searchResponse.data.results;
             // Get urls
-            searchResults = await searchResults.reduce(async (promisedResults, place) => {
-              const urlList = await getRestaurantsURLs(
-                place.place_id,
-                `${place.name} ${place.formatted_address}`
-              );
-              if (urlList.length > 0) {
-                place.urls = urlList;
-                (await promisedResults).push(place);
-              } 
-              return promisedResults;
-            }, Promise.resolve([]));
+            searchResults = await searchResults.reduce(
+              async (promisedResults, place) => {
+                await new Promise((r) =>
+                  setTimeout(r, Math.floor(Math.random() * 5000))
+                );
+                const urlList = await getRestaurantsURLs(
+                  place.place_id,
+                  `${place.name} ${place.formatted_address}`
+                );
+
+                if (urlList.length > 0) {
+                  place.urls = urlList;
+                  (await promisedResults).push(place);
+                }
+                return promisedResults;
+              },
+              Promise.resolve([])
+            );
 
             // Add to list
             tempRestaurantList = [...tempRestaurantList, ...searchResults];
