@@ -46,10 +46,11 @@ export const Map = ({ addressLocation }: Props) => {
   });
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
 
-  const getRestaurantsURLs = async (searchTerm) => {
+  const getRestaurantsURLs = async (place_id, searchTerm) => {
     const { data } = await axios.get('/api/urls', {
       params: {
-        search: searchTerm,
+        place_id: place_id,
+        search: searchTerm
       },
     });
     return data.urls;
@@ -99,20 +100,26 @@ export const Map = ({ addressLocation }: Props) => {
                 `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
               );
             }
-            
-            let searchResults = searchResponse.data.results
+
+            let searchResults = searchResponse.data.results;
             // Get urls
             searchResults = await Promise.all(
               searchResults.map(async (place) => {
                 const urlList = await getRestaurantsURLs(
+                  place.place_id,
                   `${place.name} ${place.formatted_address}`
                 );
                 if (urlList.length > 0) {
                   place.urls = urlList;
+                  return place;
+                } else {
+                  return null;
                 }
-                return place;
               })
             );
+            searchResults = searchResults.filter((place) => {
+              return place !== null;
+            })
 
             // Add to list
             tempRestaurantList = [...tempRestaurantList, ...searchResults];
@@ -225,9 +232,7 @@ export const Map = ({ addressLocation }: Props) => {
           )}
         </div>
       ) : (
-        <h1>
-          Enter your address to start searching.
-        </h1>
+        <h1>Enter your address to start searching.</h1>
       )}
     </div>
   );
