@@ -208,15 +208,15 @@ export const Map = ({ addressLocation }: Props) => {
   };
 
   return (
-    <div>
+    <>
       {addressLocation !== null ? (
-        <div>
+        <>
           {!isLoading ? (
-            <div>
+            <>
               {restaurantList.length > 0 ? (
                 renderMap()
               ) : (
-                <div>
+                <>
                   {errorOccured ? (
                     <h1>
                       Error occured.
@@ -226,16 +226,16 @@ export const Map = ({ addressLocation }: Props) => {
                   ) : (
                     <h1>No restaurants found.</h1>
                   )}
-                </div>
+                </>
               )}
-            </div>
+            </>
           ) : (
             <Loader active>Finding restaurants...</Loader>
           )}
-        </div>
+        </>
       ) : (
         <h1>Enter your address to start searching.</h1>
       )}
-    </div>
+    </>
   );
 };

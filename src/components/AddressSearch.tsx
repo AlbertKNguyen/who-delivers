@@ -60,7 +60,7 @@ export const AddressSearch = () => {
   };
 
   return (
-    <div>
+    <>
       <Autocomplete
         apiKey={process.env.GOOGLE_KEY}
         style={{ width: '350px', minWidth: '40%', maxWidth: '80%' }}
@@ -76,6 +76,6 @@ export const AddressSearch = () => {
         label='Save as current address'
         onClick={() => setSaveAddress(!saveAddress)}
       />
-    </div>
+    </>
   );
 };

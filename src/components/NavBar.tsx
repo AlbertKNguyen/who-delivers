@@ -10,7 +10,7 @@ export const NavBar = () => {
   const [activeItem] = useState<string>(locationPath);
 
   return (
-    <div>
+    <>
       <Menu fixed='top' pointing secondary style={{ background: 'white' }}>
         <Menu.Item as='a' href='/' header position='left'>
           <AppLogo />
@@ -34,6 +34,6 @@ export const NavBar = () => {
           </Link>
         </Menu.Item> */}
       </Menu>
-    </div>
+    </>
   );
 };

@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const [addressLocation, setAddressLocation] = useState<Location | null>(null);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <>
       <Head>
         <title>WhoDelivers | Delivery Search</title>
         <meta name='description' content='Local restaurants that deliver' />
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
       <div style={centerStyle}>
         <Map addressLocation={addressLocation} />
       </div>
-    </div>
+    </>
   );
 };
 
