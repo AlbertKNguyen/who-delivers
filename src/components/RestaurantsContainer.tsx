@@ -1,49 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
+import { RestaurantsMap } from './RestaurantsMap';
+import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
-import Image from 'next/image';
 const axios = require('axios').default;
 
-const containerStyle = {
-  width: '1280px',
-  height: 'calc(100vh - 47px)',
-  maxWidth: '100vw',
-  maxHeight: 'calc(100vh - 47px)',
-};
+const mapStyle = {
+  marginTop: '47px',
+  width: '50vw',
+} as React.CSSProperties;
 
-const mapOptions: google.maps.MapOptions = {
-  mapTypeControl: false,
-  streetViewControl: false,
-};
+const listStyle = {
+  marginTop: '47px',
+  width: '50vw',
+} as React.CSSProperties;
 
 interface Location {
   lat: number;
   lng: number;
 }
 
-interface infoWindow {
-  open: boolean;
-  name: string;
-  urls: string[];
-  imageURL: string;
-  location: Location;
-}
-
 interface Props {
   addressLocation: Location;
 }
 
-export const Map = ({ addressLocation }: Props) => {
-  const [center, setCenter] = useState<Location>(addressLocation);
+export const RestaurantsContainer = ({ addressLocation }: Props) => {
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [infoWindow, setInfoWindow] = useState<infoWindow>({
-    open: false,
-    name: '',
-    urls: [],
-    imageURL: '',
-    location: null,
-  });
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
 
   const getRestaurantsURLs = async (place_id, searchTerm) => {
@@ -73,16 +55,6 @@ export const Map = ({ addressLocation }: Props) => {
 
   useEffect(() => {
     if (addressLocation !== null) {
-      setCenter(addressLocation);
-
-      setInfoWindow({
-        open: false,
-        name: '',
-        urls: [],
-        imageURL: '',
-        location: null,
-      });
-
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
 
@@ -145,68 +117,6 @@ export const Map = ({ addressLocation }: Props) => {
     }
   }, [addressLocation]);
 
-  const renderMap = () => {
-    return (
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={14}
-        options={mapOptions}
-      >
-        <Marker position={addressLocation} title='Home' />
-
-        {restaurantList.map((restaurant) => {
-          return (
-            <Marker
-              key={restaurant.place_id}
-              position={restaurant.geometry.location}
-              label={{ text: restaurant.name, fontSize: '12px' }}
-              icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
-              onClick={() => {
-                setInfoWindow({
-                  open: true,
-                  name: restaurant.name,
-                  urls: restaurant.urls,
-                  imageURL: '',
-                  location: restaurant.geometry.location,
-                });
-              }}
-            />
-          );
-        })}
-        {infoWindow.open && (
-          <InfoWindow
-            position={infoWindow.location}
-            onCloseClick={() => {
-              setInfoWindow({
-                open: false,
-                name: '',
-                urls: [],
-                imageURL: '',
-                location: null,
-              });
-            }}
-          >
-            <div>
-              {/* <Image src={infoWindow.imageURL} width={300} height={300} /> */}
-              {infoWindow.name}
-              {infoWindow.urls.map((url, index) => {
-                return (
-                  <div>
-                    <br />
-                    <a target='_blank' rel='noopener noreferrer' href={url}>
-                      {index === 0 ? <div>*{url}</div> : <div>{url}</div>}
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    );
-  };
-
   return (
     <>
       {addressLocation !== null ? (
@@ -214,7 +124,18 @@ export const Map = ({ addressLocation }: Props) => {
           {!isLoading ? (
             <>
               {restaurantList.length > 0 ? (
-                renderMap()
+                <div style={{ display: 'flex' }}>
+                  <div style={mapStyle}>
+                    <RestaurantsMap
+                      addressLocation={addressLocation}
+                      restaurantList={restaurantList}
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  <div style={listStyle}>
+                    <RestaurantsList />
+                  </div>
+                </div>
               ) : (
                 <>
                   {errorOccured ? (

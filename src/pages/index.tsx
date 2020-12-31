@@ -2,17 +2,9 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { Grid } from 'semantic-ui-react';
 import { NavBar } from '../components/NavBar';
-import { Map } from '../components/Map';
+import { RestaurantsContainer } from '../components/RestaurantsContainer';
 import React, { useState } from 'react';
 import { LocationContext } from '../components/LocationContext';
-
-const centerStyle = {
-  position: 'absolute',
-  left: '50%',
-  top: 'calc(50% + 23px)',
-  WebkitTransform: 'translate(-50%, -50%)',
-  transform: 'translate(-50%, -50%)',
-} as React.CSSProperties;
 
 interface Location {
   lat: number;
@@ -41,9 +33,7 @@ const Home: NextPage = () => {
       <LocationContext.Provider value={setAddressLocation}>
         <NavBar />
       </LocationContext.Provider>
-      <div style={centerStyle}>
-        <Map addressLocation={addressLocation} />
-      </div>
+      <RestaurantsContainer addressLocation={addressLocation} />
     </>
   );
 };
