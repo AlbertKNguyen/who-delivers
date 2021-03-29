@@ -5,11 +5,10 @@ import {
   Form,
   Modal,
 } from 'semantic-ui-react';
-import { Place } from '../models/Place.model';
-import { SearchFilters } from '../models/SearchFilters.model';
+import { SearchFilters } from '../../models/SearchFilters.model';
 import { AddressSearch } from './AddressSearch';
-import { AddressSearchContext } from './AddressSearchContext';
-import { SearchFiltersContext } from './SearchFiltersContext';
+import { AddressSearchContext } from '../../contexts/AddressSearchContext';
+import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(true);

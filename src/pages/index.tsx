@@ -1,10 +1,10 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { Grid } from 'semantic-ui-react';
-import { NavBar } from '../components/NavBar';
-import { RestaurantsContainer } from '../components/RestaurantsContainer';
+import { NavBar } from '../components/navbar/NavBar';
+import { RestaurantsContainer } from '../components/restaurants/RestaurantsContainer';
 import React, { useState } from 'react';
-import { SearchFiltersContext } from '../components/SearchFiltersContext';
+import { SearchFiltersContext } from '../contexts/SearchFiltersContext';
 import { SearchFilters } from '../models/SearchFilters.model';
 
 const Home: NextPage = () => {

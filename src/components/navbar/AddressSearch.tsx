@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
-import { Place } from '../models/Place.model';
+import { Place } from '../../models/Place.model';
 
-import { AddressSearchContext } from './AddressSearchContext';
-import { SearchFiltersContext } from './SearchFiltersContext';
+import { AddressSearchContext } from '../../contexts/AddressSearchContext';
+import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
 
 export const AddressSearch = () => {
   const [tempSearchFilters, setTempSearchFilters] = useContext(AddressSearchContext);

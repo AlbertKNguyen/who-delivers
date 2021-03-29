@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
-import { SearchFiltersContext } from './SearchFiltersContext';
+import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
 const axios = require('axios').default;
 
 const mapStyle = {

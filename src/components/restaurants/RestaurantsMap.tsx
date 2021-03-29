@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
-import { Loader } from 'semantic-ui-react';
-import Image from 'next/image';
 const axios = require('axios').default;
 
 const containerStyle = {
