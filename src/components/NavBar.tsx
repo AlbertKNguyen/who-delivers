@@ -1,8 +1,7 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { AppLogo } from './AppLogo';
-import { AddressSearch } from './AddressSearch';
-import { Menu, Button } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 import React, { useState } from 'react';
 import { SearchModal } from './SearchModal';
 

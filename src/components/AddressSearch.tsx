@@ -1,8 +1,7 @@
-import { Dispatch, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
-import { Checkbox } from 'semantic-ui-react';
 import { Place } from '../models/Place.model';
-import { SearchFilters } from '../models/SearchFilters.model';
+
 import { AddressSearchContext } from './AddressSearchContext';
 import { SearchFiltersContext } from './SearchFiltersContext';
 

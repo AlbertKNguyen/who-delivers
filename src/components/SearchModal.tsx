@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext,  useState } from 'react';
 import {
   Button,
   Checkbox,
   Form,
-  FormInput,
-  Header,
   Modal,
 } from 'semantic-ui-react';
 import { Place } from '../models/Place.model';
