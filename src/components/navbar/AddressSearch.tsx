@@ -20,9 +20,10 @@ export const AddressSearch = () => {
           lat: Number(address.location.lat),
           lng: Number(address.location.lng),
         };
-        searchFilters.address.location = location;
-        searchFilters.address.street = address.street;
-        setSearchFilters(searchFilters);
+        let tempFilters = searchFilters;
+        tempFilters.address.location = location;
+        tempFilters.address.street = address.street;
+        setSearchFilters(tempFilters);
       }
     } catch (error) {
       console.log(error);
@@ -35,9 +36,10 @@ export const AddressSearch = () => {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     };
-    tempSearchFilters.address.location = location;
-    tempSearchFilters.address.street = place.formatted_address;
-    setTempSearchFilters(tempSearchFilters);
+    let tempFilters = tempSearchFilters;
+    tempFilters.address.location = location;
+    tempFilters.address.street = place.formatted_address;
+    setTempSearchFilters(tempFilters);
   };
 
   return (

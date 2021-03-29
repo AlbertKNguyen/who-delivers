@@ -1,4 +1,4 @@
-import React, { useContext,  useState } from 'react';
+import React, { useContext,  useEffect,  useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -24,9 +24,10 @@ export const SearchModal = () => {
   const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
 
   const handleFilterWordChange = (e, { name, value }) => {
-    tempSearchFilters.filterWord = value;
-    setTempSearchFilters(tempSearchFilters);
-    console.log(tempSearchFilters);
+    let tempFilters = tempSearchFilters;
+    tempFilters.filterWord = value;
+    setTempSearchFilters(tempFilters);
+    console.log(tempSearchFilters)
   };
 
   const handleSubmit = () => {
@@ -40,8 +41,15 @@ export const SearchModal = () => {
       };
       const localStorage = window.localStorage;
       localStorage.setItem('address', JSON.stringify(address));
+    } else {
+      localStorage.clear();
     }
   };
+
+  // Get old filters
+  useEffect(() => {
+    setTempSearchFilters(searchFilters);
+  }, []);
 
   return (
     <Modal
@@ -73,6 +81,7 @@ export const SearchModal = () => {
             label='Filter'
             placeholder='Filter by word (food/cuisine)'
             name='filterWord'
+            defaultValue={searchFilters.filterWord}
             onChange={handleFilterWordChange}
           />
         </Form>
