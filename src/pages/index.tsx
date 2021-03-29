@@ -4,15 +4,17 @@ import { Grid } from 'semantic-ui-react';
 import { NavBar } from '../components/NavBar';
 import { RestaurantsContainer } from '../components/RestaurantsContainer';
 import React, { useState } from 'react';
-import { LocationContext } from '../components/LocationContext';
-
-interface Location {
-  lat: number;
-  lng: number;
-}
+import { SearchFiltersContext } from '../components/SearchFiltersContext';
+import { SearchFilters } from '../models/SearchFilters.model';
 
 const Home: NextPage = () => {
-  const [addressLocation, setAddressLocation] = useState<Location | null>(null);
+  const [searchFilters, setSearchFilters] = useState<SearchFilters | null>({
+    address: {
+      street: null,
+      location: null,
+    },
+    filterWord: '',
+  });
 
   return (
     <>
@@ -30,10 +32,10 @@ const Home: NextPage = () => {
         ></script>
       </Head>
 
-      <LocationContext.Provider value={setAddressLocation}>
+      <SearchFiltersContext.Provider value={[searchFilters, setSearchFilters]}>
         <NavBar />
-      </LocationContext.Provider>
-      <RestaurantsContainer addressLocation={addressLocation} />
+        <RestaurantsContainer />
+      </SearchFiltersContext.Provider>
     </>
   );
 };

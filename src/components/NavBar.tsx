@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { AppLogo } from './AppLogo';
 import { AddressSearch } from './AddressSearch';
 import { Menu, Button } from 'semantic-ui-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { SearchModal } from './SearchModal';
 
 export const NavBar = () => {
   const locationPath = useRouter().pathname;
@@ -18,7 +19,8 @@ export const NavBar = () => {
 
         {locationPath === '/' && (
           <Menu.Item>
-            <AddressSearch />
+            {/* <AddressSearch /> */}
+            <SearchModal />
           </Menu.Item>
         )}
 

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
+import { SearchFiltersContext } from './SearchFiltersContext';
 const axios = require('axios').default;
 
 const mapStyle = {
@@ -14,19 +15,12 @@ const listStyle = {
   width: '50vw',
 } as React.CSSProperties;
 
-interface Location {
-  lat: number;
-  lng: number;
-}
-
-interface Props {
-  addressLocation: Location;
-}
-
-export const RestaurantsContainer = ({ addressLocation }: Props) => {
+export const RestaurantsContainer = () => {
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
+  
+  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
 
   const getRestaurantsURLs = async (place_id, searchTerm) => {
     const { data } = await axios.get('/api/urls', {
@@ -54,7 +48,7 @@ export const RestaurantsContainer = ({ addressLocation }: Props) => {
   };
 
   useEffect(() => {
-    if (addressLocation !== null) {
+    if (searchFilters.address.location !== null) {
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
 
@@ -66,7 +60,7 @@ export const RestaurantsContainer = ({ addressLocation }: Props) => {
           try {
             if (pages === 1) {
               searchResponse = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=delivery&radius=5000&location=${addressLocation.lat},${addressLocation.lng}&opennow`
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=${searchFilters.filterWord}+delivery&radius=5000&location=${searchFilters.address.location.lat},${searchFilters.address.location.lng}&opennow`
               );
             } else {
               searchResponse = await axios.get(
@@ -115,11 +109,11 @@ export const RestaurantsContainer = ({ addressLocation }: Props) => {
         setIsLoading(false);
       })();
     }
-  }, [addressLocation]);
+  }, [searchFilters]);
 
   return (
     <>
-      {addressLocation !== null ? (
+      {searchFilters.address.location !== null ? (
         <>
           {!isLoading ? (
             <>
@@ -127,7 +121,7 @@ export const RestaurantsContainer = ({ addressLocation }: Props) => {
                 <div style={{ display: 'flex' }}>
                   <div style={mapStyle}>
                     <RestaurantsMap
-                      addressLocation={addressLocation}
+                      addressLocation={searchFilters.address.location}
                       restaurantList={restaurantList}
                       isLoading={isLoading}
                     />
