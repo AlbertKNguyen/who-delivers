@@ -55,7 +55,6 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
   };
 
   useEffect(() => {
-    console.log(searchFilters)
     if (searchFilters.address.location !== null) {
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
