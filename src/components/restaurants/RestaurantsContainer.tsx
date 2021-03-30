@@ -13,13 +13,13 @@ const centerStyle = {
 
 const mapStyle = {
   marginTop: '47px',
-  float: 'left'
+  float: 'left',
 } as React.CSSProperties;
 
 const listStyle = {
   marginTop: '47px',
   float: 'right',
-  borderLeft: '1px solid black'
+  borderLeft: '1px solid black',
 } as React.CSSProperties;
 
 interface Props {
@@ -34,7 +34,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     urls: [],
     imageURL: '',
     location: null,
-    index: 0
+    index: 0,
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
@@ -50,19 +50,22 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     return data.urls;
   };
 
-  const getRestaurantsDetails = async (searchResults) => {
-    const promisedDetails = searchResults.map(async (place) => {
-      if (!place.name.includes('pizza')) {
-        const placeData = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`
-        );
-        const placeDetail = placeData.data.result;
-        placeDetail.urls = place.urls;
-        return placeDetail;
-      }
-    });
-    return Promise.all(promisedDetails);
-  };
+  // const getRestaurantsDetails = async (searchResults) => {
+  //   const promisedDetails = searchResults.map(async (place) => {
+  //     if (!place.name.includes('pizza')) {
+  //       const placeData = await axios.get('/api/search', {
+  //         params: {
+  //           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
+  //           key: process.env.SECRET_KEY,
+  //         },
+  //       });
+  //       const placeDetail = placeData.data.result;
+  //       placeDetail.urls = place.urls;
+  //       return placeDetail;
+  //     }
+  //   });
+  //   return Promise.all(promisedDetails);
+  // };
 
   const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
     setInfoWindow(infoWindow);
@@ -80,16 +83,24 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
         while (pageToken && pages <= 3) {
           try {
             if (pages === 1) {
-              searchResponse = await axios.get(
-                `https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&type=restaurant&query=${searchFilters.filterWord}+delivery&radius=5000&location=${searchFilters.address.location.lat},${searchFilters.address.location.lng}&opennow`
-              );
+              const { data } = await axios.get('/api/search', {
+                params: {
+                  input:  `key=${process.env.GOOGLE_KEY}&type=restaurant&query=${searchFilters.filterWord}+delivery&radius=5000&location=${searchFilters.address.location.lat},${searchFilters.address.location.lng}&opennow`,
+                  key: process.env.SECRET_KEY,
+                },
+              });
+              searchResponse = data.result;
             } else {
-              searchResponse = await axios.get(
-                `https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
-              );
+              const { data } = await axios.get('/api/search', {
+                params: {
+                  input:  `key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`,
+                  key: process.env.SECRET_KEY,
+                },
+              });
+              searchResponse = data.result;
             }
 
-            let searchResults = searchResponse.data.results;
+            let searchResults = searchResponse.results;
             // Get urls
             searchResults = await searchResults.reduce(
               async (promisedResults, place) => {
@@ -114,7 +125,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             // Add to list
             tempRestaurantList = [...tempRestaurantList, ...searchResults];
 
-            pageToken = searchResponse.data.next_page_token;
+            pageToken = searchResponse.next_page_token;
             pages++;
           } catch (error) {
             setErrorOccured(true);
