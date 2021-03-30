@@ -1,29 +1,23 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { Grid } from 'semantic-ui-react';
-import { NavBar } from '../components/NavBar';
-import { Map } from '../components/Map';
+import { NavBar } from '../components/navbar/NavBar';
+import { RestaurantsContainer } from '../components/restaurants/RestaurantsContainer';
 import React, { useState } from 'react';
-import { LocationContext } from '../components/LocationContext';
-
-const centerStyle = {
-  position: 'absolute',
-  left: '50%',
-  top: 'calc(50% + 23px)',
-  WebkitTransform: 'translate(-50%, -50%)',
-  transform: 'translate(-50%, -50%)',
-} as React.CSSProperties;
-
-interface Location {
-  lat: number;
-  lng: number;
-}
+import { SearchFiltersContext } from '../contexts/SearchFiltersContext';
+import { SearchFilters } from '../models/SearchFilters.model';
 
 const Home: NextPage = () => {
-  const [addressLocation, setAddressLocation] = useState<Location | null>(null);
+  const [searchFilters, setSearchFilters] = useState<SearchFilters | null>({
+    address: {
+      street: null,
+      location: null,
+    },
+    filterWord: '',
+  });
 
   return (
-    <div style={{ display: 'flex' }}>
+    <>
       <Head>
         <title>WhoDelivers | Delivery Search</title>
         <meta name='description' content='Local restaurants that deliver' />
@@ -38,13 +32,11 @@ const Home: NextPage = () => {
         ></script>
       </Head>
 
-      <LocationContext.Provider value={setAddressLocation}>
+      <SearchFiltersContext.Provider value={[searchFilters, setSearchFilters]}>
         <NavBar />
-      </LocationContext.Provider>
-      <div style={centerStyle}>
-        <Map addressLocation={addressLocation} />
-      </div>
-    </div>
+      </SearchFiltersContext.Provider>
+      <RestaurantsContainer searchFilters={searchFilters}/>
+    </>
   );
 };
 

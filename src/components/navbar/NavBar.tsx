@@ -1,16 +1,16 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { AppLogo } from './AppLogo';
-import { AddressSearch } from './AddressSearch';
-import { Menu, Button } from 'semantic-ui-react';
-import { useState } from 'react';
+import { Menu } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import { SearchModal } from './SearchModal';
 
 export const NavBar = () => {
   const locationPath = useRouter().pathname;
   const [activeItem] = useState<string>(locationPath);
 
   return (
-    <div>
+    <>
       <Menu fixed='top' pointing secondary style={{ background: 'white' }}>
         <Menu.Item as='a' href='/' header position='left'>
           <AppLogo />
@@ -18,7 +18,8 @@ export const NavBar = () => {
 
         {locationPath === '/' && (
           <Menu.Item>
-            <AddressSearch />
+            {/* <AddressSearch /> */}
+            <SearchModal />
           </Menu.Item>
         )}
 
@@ -34,6 +35,6 @@ export const NavBar = () => {
           </Link>
         </Menu.Item> */}
       </Menu>
-    </div>
+    </>
   );
 };
