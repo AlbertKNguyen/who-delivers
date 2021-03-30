@@ -105,7 +105,6 @@ export const SearchModal = () => {
           disabled={tempSearchFilters.address.street !== null}
           content={'Address is required'}
           on='click'
-          position='top right'
         />
       </Modal.Actions>
     </Modal>
