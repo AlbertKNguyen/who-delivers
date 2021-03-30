@@ -36,14 +36,16 @@ export const AddressSearch = () => {
   }, []);
 
   const onPlaceSelected = (place: Place) => {
-    const location = {
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
-    };
-    let tempFilters = tempSearchFilters;
-    tempFilters.address.location = location;
-    tempFilters.address.street = place.formatted_address;
-    setTempSearchFilters(tempFilters);
+    if (place.geometry) {
+      const location = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      };
+      let tempFilters = tempSearchFilters;
+      tempFilters.address.location = location;
+      tempFilters.address.street = place.formatted_address;
+      setTempSearchFilters(tempFilters);
+    }
   };
 
   return (
