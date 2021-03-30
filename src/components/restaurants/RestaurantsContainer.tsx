@@ -6,7 +6,7 @@ import { SearchFilters } from '../../models/SearchFilters.model';
 const axios = require('axios').default;
 
 const centerStyle = {
-  marginTop: '20vw',
+  marginTop: '48vh',
   textAlign: 'center'
 } as React.CSSProperties;
 
@@ -139,7 +139,7 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
                   </div>
                 </div>
               ) : (
-                <>
+                <div style={centerStyle}>
                   {errorOccured ? (
                     <h1>
                       Error occured.
@@ -149,7 +149,7 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
                   ) : (
                     <h1>No restaurants found.</h1>
                   )}
-                </>
+                </div>
               )}
             </>
           ) : (
