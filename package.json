@@ -10,7 +10,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.0.2",
     "apollo-server-micro": "^2.19.0",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "axios-https-proxy-fix": "^0.17.1",
     "cheerio": "^1.0.0-rc.3",
     "graphql": "^15.4.0",
@@ -18,7 +18,7 @@
     "graphql-tag": "^2.11.0",
     "http-proxy": "^1.18.1",
     "mongodb": "^3.6.3",
-    "next": "^10.0.0",
+    "next": "^10.1.2",
     "npm-force-resolutions": "0.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
