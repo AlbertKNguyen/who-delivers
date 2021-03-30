@@ -3,29 +3,39 @@ import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
 import { SearchFilters } from '../../models/SearchFilters.model';
+import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 const axios = require('axios').default;
 
 const centerStyle = {
   marginTop: '48vh',
-  textAlign: 'center'
+  textAlign: 'center',
 } as React.CSSProperties;
 
 const mapStyle = {
   marginTop: '47px',
-  width: '50vw',
+  float: 'left'
 } as React.CSSProperties;
 
 const listStyle = {
   marginTop: '47px',
-  width: '50vw',
+  float: 'right',
+  borderLeft: '1px solid black'
 } as React.CSSProperties;
 
 interface Props {
-  searchFilters: SearchFilters
+  searchFilters: SearchFilters;
 }
 
-export const RestaurantsContainer = ({searchFilters}: Props) => {
+export const RestaurantsContainer = ({ searchFilters }: Props) => {
   const [restaurantList, setRestaurantList] = useState([]);
+  const [infoWindow, setInfoWindow] = useState<RestaurantInfoWindow>({
+    open: false,
+    name: '',
+    urls: [],
+    imageURL: '',
+    location: null,
+    index: 0
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
 
@@ -52,6 +62,10 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
       }
     });
     return Promise.all(promisedDetails);
+  };
+
+  const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
+    setInfoWindow(infoWindow);
   };
 
   useEffect(() => {
@@ -82,6 +96,7 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
                 await new Promise((r) =>
                   setTimeout(r, Math.floor(Math.random() * 5000))
                 );
+
                 const urlList = await getRestaurantsURLs(
                   place.place_id,
                   `${place.name} ${place.formatted_address}`
@@ -125,18 +140,23 @@ export const RestaurantsContainer = ({searchFilters}: Props) => {
           {!isLoading ? (
             <>
               {restaurantList.length > 0 ? (
-                <div style={{ display: 'flex' }}>
+                <>
                   <div style={mapStyle}>
                     <RestaurantsMap
+                      infoWindow={infoWindow}
+                      updateInfoWindow={updateRestaurantInfoWindow}
                       addressLocation={searchFilters.address.location}
                       restaurantList={restaurantList}
-                      isLoading={isLoading}
                     />
                   </div>
                   <div style={listStyle}>
-                    <RestaurantsList />
+                    <RestaurantsList
+                      infoWindow={infoWindow}
+                      updateInfoWindow={updateRestaurantInfoWindow}
+                      restaurantList={restaurantList}
+                    />
                   </div>
-                </div>
+                </>
               ) : (
                 <div style={centerStyle}>
                   {errorOccured ? (

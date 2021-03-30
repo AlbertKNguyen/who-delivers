@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
+import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 const axios = require('axios').default;
 
 const containerStyle = {
-  width: '1280px',
+  width: '65vw',
   height: 'calc(100vh - 47px)',
-  maxWidth: '100vw',
+  maxWidth: '65vw',
   maxHeight: 'calc(100vh - 47px)',
 };
 
@@ -19,45 +20,24 @@ interface Location {
   lng: number;
 }
 
-interface infoWindow {
-  open: boolean;
-  name: string;
-  urls: string[];
-  imageURL: string;
-  location: Location;
-}
-
 interface Props {
   addressLocation: Location;
   restaurantList: any[];
-  isLoading: boolean;
+  infoWindow: RestaurantInfoWindow;
+  updateInfoWindow: (infoWindow: RestaurantInfoWindow) => void;
 }
 
 export const RestaurantsMap = ({
   addressLocation,
   restaurantList,
-  isLoading,
+  infoWindow,
+  updateInfoWindow,
 }: Props) => {
   const [center, setCenter] = useState<Location>(addressLocation);
-  const [infoWindow, setInfoWindow] = useState<infoWindow>({
-    open: false,
-    name: '',
-    urls: [],
-    imageURL: '',
-    location: null,
-  });
 
   useEffect(() => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
-
-      setInfoWindow({
-        open: false,
-        name: '',
-        urls: [],
-        imageURL: '',
-        location: null,
-      });
     }
   }, [restaurantList]);
 
@@ -71,7 +51,7 @@ export const RestaurantsMap = ({
       >
         <Marker position={addressLocation} title='Home' />
 
-        {restaurantList.map((restaurant) => {
+        {restaurantList.map((restaurant, index) => {
           return (
             <Marker
               key={restaurant.place_id}
@@ -79,12 +59,15 @@ export const RestaurantsMap = ({
               label={{ text: restaurant.name, fontSize: '12px' }}
               icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
               onClick={() => {
-                setInfoWindow({
+                let infoWindowLocation = Object.assign({}, restaurant.geometry.location);
+                infoWindowLocation.lat += 0.002
+                updateInfoWindow({
                   open: true,
                   name: restaurant.name,
                   urls: restaurant.urls,
                   imageURL: '',
-                  location: restaurant.geometry.location,
+                  location: infoWindowLocation,
+                  index: index
                 });
               }}
             />
@@ -94,12 +77,13 @@ export const RestaurantsMap = ({
           <InfoWindow
             position={infoWindow.location}
             onCloseClick={() => {
-              setInfoWindow({
+              updateInfoWindow({
                 open: false,
                 name: '',
                 urls: [],
                 imageURL: '',
                 location: null,
+                index: 0
               });
             }}
           >
@@ -108,13 +92,13 @@ export const RestaurantsMap = ({
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
-                  <div style={{ overflow: 'hidden' }}>
+                  <div style={{ overflow: 'hidden' }} key={index}>
                     {/* <br />
                     {index === 0 && (
                       <p style={{ display: 'inline', float: 'left' }}>*</p>
                     )} */}
                     <a
-                      style={{ display: 'inline', float: 'right' }}
+                      style={{ display: 'inline' }}
                       target='_blank'
                       rel='noopener noreferrer'
                       href={url}
