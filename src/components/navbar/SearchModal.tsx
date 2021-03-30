@@ -1,10 +1,5 @@
-import React, { useContext,  useEffect,  useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Form,
-  Modal,
-} from 'semantic-ui-react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Checkbox, Form, Modal } from 'semantic-ui-react';
 import { SearchFilters } from '../../models/SearchFilters.model';
 import { AddressSearch } from './AddressSearch';
 import { AddressSearchContext } from '../../contexts/AddressSearchContext';
@@ -27,10 +22,11 @@ export const SearchModal = () => {
     let tempFilters = tempSearchFilters;
     tempFilters.filterWord = value;
     setTempSearchFilters(tempFilters);
-    console.log(tempSearchFilters)
+    console.log(value)
   };
 
   const handleSubmit = () => {
+    setOpen(false);
     setSearchFilters(tempSearchFilters);
 
     // Save address and geolocation in localStorage
@@ -48,7 +44,9 @@ export const SearchModal = () => {
 
   // Get old filters
   useEffect(() => {
-    setTempSearchFilters(searchFilters);
+    if (searchFilters.address.street) {
+      setTempSearchFilters(searchFilters);
+    }
   }, []);
 
   return (
@@ -56,12 +54,12 @@ export const SearchModal = () => {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={<Button>Search</Button>}
+      trigger={<Button style={{marginLeft: '-36px'}}>Search</Button>}
     >
       <Modal.Header>Search for Restaurants</Modal.Header>
       <Modal.Content>
         <Form onSubmit={handleSubmit}>
-          <Form.Input label='Address' required>
+          <Form.Input label='Address' required onChange={handleFilterWordChange}>
             <AddressSearchContext.Provider
               value={[tempSearchFilters, setTempSearchFilters]}
             >
@@ -90,7 +88,6 @@ export const SearchModal = () => {
         <Button onClick={() => setOpen(false)}>Cancel</Button>
         <Button
           onClick={() => {
-            setOpen(false);
             handleSubmit();
           }}
           positive

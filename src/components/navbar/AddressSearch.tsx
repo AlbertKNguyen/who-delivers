@@ -3,11 +3,9 @@ import Autocomplete from 'react-google-autocomplete';
 import { Place } from '../../models/Place.model';
 
 import { AddressSearchContext } from '../../contexts/AddressSearchContext';
-import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
 
 export const AddressSearch = () => {
   const [tempSearchFilters, setTempSearchFilters] = useContext(AddressSearchContext);
-  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
 
   // use localStorage to autofill address and initiate search
   useEffect(() => {
@@ -20,10 +18,16 @@ export const AddressSearch = () => {
           lat: Number(address.location.lat),
           lng: Number(address.location.lng),
         };
-        let tempFilters = searchFilters;
+        let tempFilters = {
+          address: {
+            street: null,
+            location: null,
+          },
+          filterWord: '',
+        };
         tempFilters.address.location = location;
         tempFilters.address.street = address.street;
-        setSearchFilters(tempFilters);
+        setTempSearchFilters(tempFilters);
       }
     } catch (error) {
       console.log(error);
@@ -47,7 +51,7 @@ export const AddressSearch = () => {
       apiKey={process.env.GOOGLE_KEY}
       style={{ width: '100%', height: '40px' }}
       placeholder='Enter your address'
-      defaultValue={searchFilters.address.street}
+      defaultValue={tempSearchFilters.address.street}
       onPlaceSelected={onPlaceSelected}
       types={['address']}
       componentRestrictions={{ country: 'us' }}

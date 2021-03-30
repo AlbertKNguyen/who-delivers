@@ -109,10 +109,10 @@ export const RestaurantsMap = ({
               {infoWindow.urls.map((url, index) => {
                 return (
                   <div style={{ overflow: 'hidden' }}>
-                    <br />
+                    {/* <br />
                     {index === 0 && (
                       <p style={{ display: 'inline', float: 'left' }}>*</p>
-                    )}
+                    )} */}
                     <a
                       style={{ display: 'inline', float: 'right' }}
                       target='_blank'

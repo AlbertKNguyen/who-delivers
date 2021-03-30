@@ -1,9 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
-import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
+import { SearchFilters } from '../../models/SearchFilters.model';
 const axios = require('axios').default;
+
+const centerStyle = {
+  marginTop: '20vw',
+  textAlign: 'center'
+} as React.CSSProperties;
 
 const mapStyle = {
   marginTop: '47px',
@@ -15,12 +20,14 @@ const listStyle = {
   width: '50vw',
 } as React.CSSProperties;
 
-export const RestaurantsContainer = () => {
+interface Props {
+  searchFilters: SearchFilters
+}
+
+export const RestaurantsContainer = ({searchFilters}: Props) => {
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
-  
-  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
 
   const getRestaurantsURLs = async (place_id, searchTerm) => {
     const { data } = await axios.get('/api/urls', {
@@ -37,7 +44,7 @@ export const RestaurantsContainer = () => {
     const promisedDetails = searchResults.map(async (place) => {
       if (!place.name.includes('pizza')) {
         const placeData = await axios.get(
-          `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`
+          `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`
         );
         const placeDetail = placeData.data.result;
         placeDetail.urls = place.urls;
@@ -48,6 +55,7 @@ export const RestaurantsContainer = () => {
   };
 
   useEffect(() => {
+    console.log(searchFilters)
     if (searchFilters.address.location !== null) {
       const getNearbyRestaurants = async () => {
         setIsLoading(true);
@@ -64,7 +72,7 @@ export const RestaurantsContainer = () => {
               );
             } else {
               searchResponse = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`
               );
             }
 
@@ -149,7 +157,7 @@ export const RestaurantsContainer = () => {
           )}
         </>
       ) : (
-        <h1>Enter your address to start searching.</h1>
+        <h1 style={centerStyle}>Enter your address to start searching.</h1>
       )}
     </>
   );

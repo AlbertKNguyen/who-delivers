@@ -34,8 +34,8 @@ const Home: NextPage = () => {
 
       <SearchFiltersContext.Provider value={[searchFilters, setSearchFilters]}>
         <NavBar />
-        <RestaurantsContainer />
       </SearchFiltersContext.Provider>
+      <RestaurantsContainer searchFilters={searchFilters}/>
     </>
   );
 };
