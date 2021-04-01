@@ -22,7 +22,6 @@ const config = {
 const search_engines = [
   'https://www.google.com/search?hl=en&q=',
   'https://search.yahoo.com/search?p=',
-  'https://www.bing.com/search?q=',
   'https://www.bing.com/maps?q=',
 ];
 
@@ -30,7 +29,7 @@ export default async (req: Request, res) => {
   if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
       try {
-        const url = `${search_engines[0]}${req.query.search}`;
+        const url = `${search_engines[1]}${req.query.search}`;
         const { data } = await axios.get(url, config);
         const $ = cheerio.load(data);
 
