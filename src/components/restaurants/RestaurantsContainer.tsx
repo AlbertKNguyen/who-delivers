@@ -105,7 +105,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             searchResults = await searchResults.reduce(
               async (promisedResults, place) => {
                 await new Promise((r) =>
-                  setTimeout(r, Math.floor(Math.random() * 5000))
+                  setTimeout(r, Math.floor(Math.random() * 3000))
                 );
 
                 const urlList = await getRestaurantsURLs(

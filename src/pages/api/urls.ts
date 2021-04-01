@@ -22,7 +22,6 @@ const config = {
 const search_engines = [
   'https://www.google.com/search?hl=en&q=',
   'https://search.yahoo.com/search?p=',
-  'https://www.bing.com/search?q=',
   'https://www.bing.com/maps?q=',
 ];
 
