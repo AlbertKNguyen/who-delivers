@@ -41,7 +41,7 @@ export const RestaurantsList = ({
         header={restaurant.name}
         description={restaurant.urls.map((url, index) => {
           return (
-            <div style={{ overflow: 'hidden' }} key={index}>
+            <li style={{ overflow: 'hidden' }} key={index}>
               <a
                 style={{ display: 'inline' }}
                 target='_blank'
@@ -50,7 +50,7 @@ export const RestaurantsList = ({
               >
                 {url}
               </a>
-            </div>
+            </li>
           );
         })}
         onClick={() => {

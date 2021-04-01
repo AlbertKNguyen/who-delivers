@@ -59,15 +59,18 @@ export const RestaurantsMap = ({
               label={{ text: restaurant.name, fontSize: '12px' }}
               icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
               onClick={() => {
-                let infoWindowLocation = Object.assign({}, restaurant.geometry.location);
-                infoWindowLocation.lat += 0.002
+                let infoWindowLocation = Object.assign(
+                  {},
+                  restaurant.geometry.location
+                );
+                infoWindowLocation.lat += 0.002;
                 updateInfoWindow({
                   open: true,
                   name: restaurant.name,
                   urls: restaurant.urls,
                   imageURL: '',
                   location: infoWindowLocation,
-                  index: index
+                  index: index,
                 });
               }}
             />
@@ -83,7 +86,7 @@ export const RestaurantsMap = ({
                 urls: [],
                 imageURL: '',
                 location: null,
-                index: 0
+                index: 0,
               });
             }}
           >
@@ -92,11 +95,12 @@ export const RestaurantsMap = ({
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
-                  <div style={{ overflow: 'hidden' }} key={index}>
+                  <li style={{ overflow: 'hidden' }} key={index}>
                     {/* <br />
                     {index === 0 && (
                       <p style={{ display: 'inline', float: 'left' }}>*</p>
                     )} */}
+
                     <a
                       style={{ display: 'inline' }}
                       target='_blank'
@@ -105,7 +109,7 @@ export const RestaurantsMap = ({
                     >
                       {url}
                     </a>
-                  </div>
+                  </li>
                 );
               })}
             </div>
