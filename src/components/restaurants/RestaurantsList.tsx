@@ -10,13 +10,20 @@ const containerStyle = {
   marginLeft: '5px',
 };
 
+interface Location {
+  lat: number;
+  lng: number;
+}
+
 interface Props {
+  addressLocation: Location;
   restaurantList: any[];
   infoWindow: RestaurantInfoWindow;
   updateInfoWindow: (infoWindow: RestaurantInfoWindow) => void;
 }
 
 export const RestaurantsList = ({
+  addressLocation,
   restaurantList,
   infoWindow,
   updateInfoWindow,
@@ -29,6 +36,16 @@ export const RestaurantsList = ({
     }
   }, [infoWindow]);
 
+  const distanceInMiles = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
+    const p = 0.017453292519943295;    // Math.PI / 180
+    const c = Math.cos;
+    const a = 0.5 - c((lat2 - lat1) * p)/2 + 
+            c(lat1 * p) * c(lat2 * p) * 
+            (1 - c((lng2 - lng1) * p))/2;
+  
+    return (7917 * Math.asin(Math.sqrt(a))).toFixed(1) + ' mi'; // 2 * R; R = 7917 mi
+  }
+
   const CardComponent = (restaurant, index: number) => {
     const cardRef = useRef(null);
     cardRefList[index] = cardRef;
@@ -38,10 +55,11 @@ export const RestaurantsList = ({
         style={{ marginLeft: '1px', width: '99%' }}
         key={restaurant.place_id}
         ref={cardRef}
+        meta={distanceInMiles(addressLocation.lat, addressLocation.lng, restaurant.geometry.location.lat, restaurant.geometry.location.lng)}
         header={restaurant.name}
         description={restaurant.urls.map((url, index) => {
           return (
-            <li style={{ overflow: 'hidden' }} key={index}>
+            <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
               <a
                 style={{ display: 'inline' }}
                 target='_blank'

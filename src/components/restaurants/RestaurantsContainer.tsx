@@ -164,6 +164,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
                     <RestaurantsList
                       infoWindow={infoWindow}
                       updateInfoWindow={updateRestaurantInfoWindow}
+                      addressLocation={searchFilters.address.location}
                       restaurantList={restaurantList}
                     />
                   </div>
