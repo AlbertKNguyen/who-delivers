@@ -95,7 +95,7 @@ export const RestaurantsMap = ({
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
-                  <li style={{ overflow: 'hidden' }} key={index}>
+                  <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
                     {/* <br />
                     {index === 0 && (
                       <p style={{ display: 'inline', float: 'left' }}>*</p>
