@@ -53,27 +53,28 @@ export const RestaurantsMap = ({
 
         {restaurantList.map((restaurant, index) => {
           return (
-            <Marker
-              key={restaurant.place_id}
-              position={restaurant.geometry.location}
-              label={{ text: restaurant.name, fontSize: '12px' }}
-              icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
-              onClick={() => {
-                let infoWindowLocation = Object.assign(
-                  {},
-                  restaurant.geometry.location
-                );
-                infoWindowLocation.lat += 0.002;
-                updateInfoWindow({
-                  open: true,
-                  name: restaurant.name,
-                  urls: restaurant.urls,
-                  imageURL: '',
-                  location: infoWindowLocation,
-                  index: index,
-                });
-              }}
-            />
+            <div key={restaurant.place_id}>
+              <Marker
+                position={restaurant.geometry.location}
+                label={{ text: restaurant.name, fontSize: '12px' }}
+                icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
+                onClick={() => {
+                  let infoWindowLocation = Object.assign(
+                    {},
+                    restaurant.geometry.location
+                  );
+                  infoWindowLocation.lat += 0.002;
+                  updateInfoWindow({
+                    open: true,
+                    name: restaurant.name,
+                    urls: restaurant.urls,
+                    imageURL: '',
+                    location: infoWindowLocation,
+                    index: index,
+                  });
+                }}
+              />
+            </div>
           );
         })}
         {infoWindow.open && (
@@ -95,7 +96,10 @@ export const RestaurantsMap = ({
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
-                  <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
+                  <li
+                    style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
+                    key={index}
+                  >
                     {/* <br />
                     {index === 0 && (
                       <p style={{ display: 'inline', float: 'left' }}>*</p>
