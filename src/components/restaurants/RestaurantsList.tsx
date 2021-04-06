@@ -32,7 +32,9 @@ export const RestaurantsList = ({
 
   useEffect(() => {
     if (infoWindow.open === true) {
-      //cardRefList[infoWindow.index].current.scrollIntoView();
+      cardRefList[infoWindow.index].current.scrollIntoView({
+        behavior: 'smooth',
+      });
     }
   }, [infoWindow]);
 
