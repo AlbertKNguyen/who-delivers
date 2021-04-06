@@ -64,6 +64,11 @@ export const SearchModal = () => {
             label='Address'
             required
             onChange={handleFilterWordChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit();
+              }
+            }}
           >
             <AddressSearchContext.Provider
               value={[tempSearchFilters, setTempSearchFilters]}
@@ -86,6 +91,11 @@ export const SearchModal = () => {
             name='filterWord'
             defaultValue={searchFilters.filterWord}
             onChange={handleFilterWordChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit();
+              }
+            }}
           />
         </Form>
       </Modal.Content>
