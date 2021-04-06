@@ -39,7 +39,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
 
-  const getRestaurantsURLs = async (place_id, searchTerm) => {
+  const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
       params: {
         place_id: place_id,
@@ -49,23 +49,6 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     });
     return data.urls;
   };
-
-  // const getRestaurantsDetails = async (searchResults) => {
-  //   const promisedDetails = searchResults.map(async (place) => {
-  //     if (!place.name.includes('pizza')) {
-  //       const placeData = await axios.get('/api/search', {
-  //         params: {
-  //           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
-  //           key: process.env.SECRET_KEY,
-  //         },
-  //       });
-  //       const placeDetail = placeData.data.result;
-  //       placeDetail.urls = place.urls;
-  //       return placeDetail;
-  //     }
-  //   });
-  //   return Promise.all(promisedDetails);
-  // };
 
   const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
     setInfoWindow(infoWindow);
@@ -193,3 +176,20 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     </>
   );
 };
+
+  // const getRestaurantsDetails = async (searchResults) => {
+  //   const promisedDetails = searchResults.map(async (place) => {
+  //     if (!place.name.includes('pizza')) {
+  //       const placeData = await axios.get('/api/search', {
+  //         params: {
+  //           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
+  //           key: process.env.SECRET_KEY,
+  //         },
+  //       });
+  //       const placeDetail = placeData.data.result;
+  //       placeDetail.urls = place.urls;
+  //       return placeDetail;
+  //     }
+  //   });
+  //   return Promise.all(promisedDetails);
+  // };
