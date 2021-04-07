@@ -92,7 +92,6 @@ export const RestaurantsMap = ({
             }}
           >
             <div>
-              {/* <Image src={infoWindow.imageURL} width={300} height={300} /> */}
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
@@ -100,11 +99,6 @@ export const RestaurantsMap = ({
                     style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
                     key={index}
                   >
-                    {/* <br />
-                    {index === 0 && (
-                      <p style={{ display: 'inline', float: 'left' }}>*</p>
-                    )} */}
-
                     <a
                       style={{ display: 'inline' }}
                       target='_blank'

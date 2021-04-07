@@ -62,13 +62,13 @@ export const RestaurantsList = ({
       <div ref={cardRef} key={restaurant.place_id}>
         <Card
           style={{ marginLeft: '1px', width: '99%' }}
+          header={restaurant.name}
           meta={distanceInMiles(
             addressLocation.lat,
             addressLocation.lng,
             restaurant.geometry.location.lat,
             restaurant.geometry.location.lng
           )}
-          header={restaurant.name}
           description={restaurant.urls.map((url, index) => {
             return (
               <li
