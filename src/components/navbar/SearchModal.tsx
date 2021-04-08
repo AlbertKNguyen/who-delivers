@@ -6,7 +6,7 @@ import { AddressSearchContext } from '../../contexts/AddressSearchContext';
 import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
 
 export const SearchModal = () => {
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const [saveAddress, setSaveAddress] = useState<boolean>(true);
   const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
     address: {
@@ -55,7 +55,7 @@ export const SearchModal = () => {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={<Button style={{ marginLeft: '-36px' }}>Search</Button>}
+      trigger={<Button style={{ marginLeft: '-36px' }}>Search Restaurants</Button>}
     >
       <Modal.Header>Search for Restaurants</Modal.Header>
       <Modal.Content>
@@ -78,7 +78,7 @@ export const SearchModal = () => {
           </Form.Input>
           <Form.Field>
             <Checkbox
-              defaultChecked
+              checked={saveAddress}
               style={{ marginTop: '-5px', float: 'right' }}
               label='Save as current address'
               onClick={() => setSaveAddress(!saveAddress)}
