@@ -7,17 +7,15 @@ import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 const axios = require('axios').default;
 
 const centerStyle = {
-  marginTop: '48vh',
+  transform: 'translateY(40vh)',
   textAlign: 'center',
 } as React.CSSProperties;
 
 const mapStyle = {
-  marginTop: '47px',
   float: 'left',
 } as React.CSSProperties;
 
 const listStyle = {
-  marginTop: '47px',
   float: 'right',
   borderLeft: '1px solid black',
 } as React.CSSProperties;
@@ -68,7 +66,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             if (pages === 1) {
               const { data } = await axios.get('/api/search', {
                 params: {
-                  input:  `key=${process.env.GOOGLE_KEY}&type=restaurant&query=${searchFilters.filterWord}+delivery&radius=5000&location=${searchFilters.address.location.lat},${searchFilters.address.location.lng}&opennow`,
+                  input: `key=${process.env.GOOGLE_KEY}&type=restaurant&query=${searchFilters.filterWord}+delivery&radius=5000&location=${searchFilters.address.location.lat},${searchFilters.address.location.lng}&opennow`,
                   key: process.env.SECRET_KEY,
                 },
               });
@@ -76,7 +74,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             } else {
               const { data } = await axios.get('/api/search', {
                 params: {
-                  input:  `key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`,
+                  input: `key=${process.env.GOOGLE_KEY}&pagetoken=${pageToken}`,
                   key: process.env.SECRET_KEY,
                 },
               });
@@ -156,40 +154,44 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
                 <div style={centerStyle}>
                   {errorOccured ? (
                     <h1>
-                      Error occured.
+                      Error occured
                       <br />
-                      Try refreshing the page.
+                      Try refreshing the page
                     </h1>
                   ) : (
-                    <h1>No restaurants found.</h1>
+                    <h1>No restaurants found</h1>
                   )}
                 </div>
               )}
             </>
           ) : (
-            <Loader active>Finding restaurants...</Loader>
+            <Loader style={{ marginLeft: '9px' }} active>
+              Finding restaurants...
+            </Loader>
           )}
         </>
       ) : (
-        <h1 style={centerStyle}>Enter your address to start searching.</h1>
+        <h1 style={centerStyle}>
+          Click the 'Search Restaurants' button above to start your search
+        </h1>
       )}
     </>
   );
 };
 
-  // const getRestaurantsDetails = async (searchResults) => {
-  //   const promisedDetails = searchResults.map(async (place) => {
-  //     if (!place.name.includes('pizza')) {
-  //       const placeData = await axios.get('/api/search', {
-  //         params: {
-  //           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
-  //           key: process.env.SECRET_KEY,
-  //         },
-  //       });
-  //       const placeDetail = placeData.data.result;
-  //       placeDetail.urls = place.urls;
-  //       return placeDetail;
-  //     }
-  //   });
-  //   return Promise.all(promisedDetails);
-  // };
+// const getRestaurantsDetails = async (searchResults) => {
+//   const promisedDetails = searchResults.map(async (place) => {
+//     if (!place.name.includes('pizza')) {
+//       const placeData = await axios.get('/api/search', {
+//         params: {
+//           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
+//           key: process.env.SECRET_KEY,
+//         },
+//       });
+//       const placeDetail = placeData.data.result;
+//       placeDetail.urls = place.urls;
+//       return placeDetail;
+//     }
+//   });
+//   return Promise.all(promisedDetails);
+// };

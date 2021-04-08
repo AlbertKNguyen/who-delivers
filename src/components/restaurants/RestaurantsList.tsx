@@ -5,9 +5,9 @@ import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 
 const containerStyle = {
   width: 'calc(35vw - 6px)',
-  height: 'calc(100vh - 47px)',
+  height: 'calc(100vh - 48px)',
   overflow: 'auto',
-  marginLeft: '5px',
+  marginLeft: '5px'
 };
 
 interface Location {

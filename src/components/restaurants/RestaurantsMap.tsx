@@ -5,9 +5,7 @@ const axios = require('axios').default;
 
 const containerStyle = {
   width: '65vw',
-  height: 'calc(100vh - 47px)',
-  maxWidth: '65vw',
-  maxHeight: 'calc(100vh - 47px)',
+  height: 'calc(100vh - 48px)',
 };
 
 const mapOptions: google.maps.MapOptions = {
