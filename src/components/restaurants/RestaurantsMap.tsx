@@ -3,11 +3,6 @@ import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 const axios = require('axios').default;
 
-const containerStyle = {
-  width: '65vw',
-  height: 'calc(100vh - 48px)',
-};
-
 const mapOptions: google.maps.MapOptions = {
   mapTypeControl: false,
   streetViewControl: false,
@@ -19,6 +14,7 @@ interface Location {
 }
 
 interface Props {
+  style: React.CSSProperties;
   addressLocation: Location;
   restaurantList: any[];
   infoWindow: RestaurantInfoWindow;
@@ -26,6 +22,7 @@ interface Props {
 }
 
 export const RestaurantsMap = ({
+  style,
   addressLocation,
   restaurantList,
   infoWindow,
@@ -42,7 +39,7 @@ export const RestaurantsMap = ({
   const renderMap = () => {
     return (
       <GoogleMap
-        mapContainerStyle={containerStyle}
+        mapContainerStyle={style}
         center={center}
         zoom={14}
         options={mapOptions}

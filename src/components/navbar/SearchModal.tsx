@@ -11,6 +11,7 @@ import { SearchFilters } from '../../models/SearchFilters.model';
 import { AddressSearch } from './AddressSearch';
 import { AddressSearchContext } from '../../contexts/AddressSearchContext';
 import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
+import { useMediaQuery } from 'react-responsive';
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -33,6 +34,7 @@ export const SearchModal = () => {
     { key: 'seamless', text: 'Seamless', value: 'seamless' },
     { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
   ];
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   const handleFilterWordChange = (e, { name, value }) => {
     let tempFilters = tempSearchFilters;
@@ -74,11 +76,18 @@ export const SearchModal = () => {
 
   return (
     <Modal
+      style={{ maxHeight: '100vw', maxWidth: '100vw' }}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
       trigger={
-        <Button style={{ marginLeft: '-36px' }}>Search Restaurants</Button>
+        <div style={{ transform: 'translateY(7px)'}}>
+          {isMobile ? (
+            <Button style={{ marginLeft: 'calc(50vw - 100px)' }}>Search Restaurants</Button>
+          ) : (
+            <Button style={{ marginLeft: '-33px' }}>Search Restaurants</Button>
+          )}
+        </div>
       }
     >
       <Modal.Header>Search for Restaurants</Modal.Header>

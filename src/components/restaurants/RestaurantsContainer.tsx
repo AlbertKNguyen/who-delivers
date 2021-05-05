@@ -4,19 +4,20 @@ import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
 import { SearchFilters } from '../../models/SearchFilters.model';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
+import { useMediaQuery } from 'react-responsive';
 const axios = require('axios').default;
 
 const centerStyle = {
-  transform: 'translateY(40vh)',
+  transform: 'translateY(min(calc(50vh - 100px), 60vw))',
   textAlign: 'center',
-} as React.CSSProperties;
-
-const mapStyle = {
-  float: 'left',
 } as React.CSSProperties;
 
 const listStyle = {
   float: 'right',
+  width: '35vw',
+  height: 'calc(100vh - 48px)',
+  overflow: 'auto',
+  paddingLeft: '5px',
   borderLeft: '1px solid black',
 } as React.CSSProperties;
 
@@ -36,6 +37,12 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
+  const isNotMobile = useMediaQuery({ query: '(min-width: 768px)' });
+  const mapStyle = {
+    float: 'left',
+    width: isNotMobile ? '65vw' : '100vw',
+    height: 'calc(100vh - 48px)',
+  } as React.CSSProperties;
 
   const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
@@ -52,6 +59,21 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
   const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
     setInfoWindow(infoWindow);
   };
+
+  // useEffect(() => {
+  //   if (isNotMobile) {
+  //     mapStyle = {
+  //       float: 'left',
+  //       width: '65vw',
+  //       height: 'calc(100vh - 48px)',
+  //     };
+  //   } else {
+  //     mapStyle = {
+  //       width: '100vw',
+  //       height: 'calc(100vh - 48px)',
+  //     };
+  //   }
+  // }, [isNotMobile]);
 
   useEffect(() => {
     if (searchFilters.address.location !== null) {
@@ -92,7 +114,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
 
                 const urlList = await getRestaurantsURLs(
                   place.place_id,
-                  `${place.name} ${place.formatted_address}`,
+                  `${place.name} ${place.formatted_address}`
                 );
 
                 if (urlList.length > 0) {
@@ -134,22 +156,22 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             <>
               {restaurantList.length > 0 ? (
                 <>
-                  <div style={mapStyle}>
-                    <RestaurantsMap
-                      infoWindow={infoWindow}
-                      updateInfoWindow={updateRestaurantInfoWindow}
-                      addressLocation={searchFilters.address.location}
-                      restaurantList={restaurantList}
-                    />
-                  </div>
-                  <div style={listStyle}>
+                  <RestaurantsMap
+                    style={mapStyle}
+                    infoWindow={infoWindow}
+                    updateInfoWindow={updateRestaurantInfoWindow}
+                    addressLocation={searchFilters.address.location}
+                    restaurantList={restaurantList}
+                  />
+                  {isNotMobile && (
                     <RestaurantsList
+                      style={listStyle}
                       infoWindow={infoWindow}
                       updateInfoWindow={updateRestaurantInfoWindow}
                       addressLocation={searchFilters.address.location}
                       restaurantList={restaurantList}
                     />
-                  </div>
+                  )}
                 </>
               ) : (
                 <div style={centerStyle}>

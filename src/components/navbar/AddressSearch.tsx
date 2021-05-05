@@ -24,6 +24,7 @@ export const AddressSearch = () => {
             location: null,
           },
           filterWord: '',
+          allowedApps: []
         };
         tempFilters.address.location = location;
         tempFilters.address.street = address.street;
