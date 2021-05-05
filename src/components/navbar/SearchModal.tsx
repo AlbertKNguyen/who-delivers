@@ -51,7 +51,9 @@ export const SearchModal = () => {
   const handleSubmit = () => {
     if (tempSearchFilters.address.street) {
       setOpen(false);
-      setSearchFilters(tempSearchFilters);
+      if (JSON.stringify(tempSearchFilters) != JSON.stringify(searchFilters)) {
+        setSearchFilters(tempSearchFilters);
+      }
 
       // Save address and geolocation in localStorage
       if (saveAddress) {
