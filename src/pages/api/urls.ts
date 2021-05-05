@@ -15,8 +15,8 @@ interface Request {
 
 const config = {
   headers: {
-    'User-Agent':
-      'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html',
+    'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html',
+    'Referer': 'https://search.yahoo.com/search'
   },
 };
 
@@ -44,7 +44,6 @@ export default async (req: Request, res) => {
             link_title.includes('Order') ||
             link_title.includes('Website')
           ) {
-            let website_url: string;
             const href = $(link).attr('href');
 
             if (
@@ -56,7 +55,7 @@ export default async (req: Request, res) => {
             ) {
               const all_apps = ['doordash', 'grubhub', 'ubereats', 'postmates', 'caviar', 'seamless', 'delivery.com'];
               if (!all_apps.some(app => href.includes(app))) {
-                url_list =  addToURLList($, link, href, url_list);
+                url_list = addToURLList($, link, href, url_list);
               } else if (req.query['allowed_apps[]']) {
                 let allowed_apps = req.query['allowed_apps[]'];
                 (typeof allowed_apps === 'string') ? allowed_apps = [allowed_apps] : null;

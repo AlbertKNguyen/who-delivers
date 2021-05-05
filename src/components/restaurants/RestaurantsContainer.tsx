@@ -108,20 +108,27 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             // Get urls
             searchResults = await searchResults.reduce(
               async (promisedResults, place) => {
-                await new Promise((r) =>
-                  setTimeout(r, Math.floor(Math.random() * 3000))
-                );
+                if (!errorOccured) {
+                  await new Promise((r) =>
+                    setTimeout(r, Math.floor(Math.random() * 3000))
+                  );
 
-                const urlList = await getRestaurantsURLs(
-                  place.place_id,
-                  `${place.name} ${place.formatted_address}`
-                );
+                  try {
+                    const urlList = await getRestaurantsURLs(
+                      place.place_id,
+                      `${place.name} ${place.formatted_address}`
+                    );
 
-                if (urlList.length > 0) {
-                  place.urls = urlList;
-                  (await promisedResults).push(place);
+                    if (urlList.length > 0) {
+                      place.urls = urlList;
+                      (await promisedResults).push(place);
+                    }
+                    return promisedResults;
+                  } catch (error) {
+                    setErrorOccured(true);
+                    return promisedResults;
+                  }
                 }
-                return promisedResults;
               },
               Promise.resolve([])
             );

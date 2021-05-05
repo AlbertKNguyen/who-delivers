@@ -20,14 +20,12 @@ export const AddressSearch = () => {
         };
         let tempFilters = {
           address: {
-            street: null,
-            location: null,
+            street: address.street,
+            location: location,
           },
-          filterWord: '',
-          allowedApps: []
+          filterWord: tempSearchFilters.filterWord,
+          allowedApps: tempSearchFilters.allowedApps
         };
-        tempFilters.address.location = location;
-        tempFilters.address.street = address.street;
         setTempSearchFilters(tempFilters);
       }
     } catch (error) {
