@@ -42,6 +42,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       params: {
         place_id: place_id,
         search: searchTerm,
+        allowed_apps: searchFilters.allowedApps,
         key: process.env.SECRET_KEY,
       },
     });
@@ -91,7 +92,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
 
                 const urlList = await getRestaurantsURLs(
                   place.place_id,
-                  `${place.name} ${place.formatted_address}`
+                  `${place.name} ${place.formatted_address}`,
                 );
 
                 if (urlList.length > 0) {

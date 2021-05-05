@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Checkbox, Form, Modal, Popup } from 'semantic-ui-react';
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  Form,
+  Modal,
+  Popup,
+} from 'semantic-ui-react';
 import { SearchFilters } from '../../models/SearchFilters.model';
 import { AddressSearch } from './AddressSearch';
 import { AddressSearchContext } from '../../contexts/AddressSearchContext';
@@ -14,13 +21,28 @@ export const SearchModal = () => {
       location: null,
     },
     filterWord: '',
+    allowedApps: [],
   });
-
   const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
+  const allowedAppsOptions = [
+    { key: 'doordash', text: 'DoorDash', value: 'doordash' },
+    { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
+    { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
+    { key: 'postmates', text: 'Postmates', value: 'postmates' },
+    { key: 'caviar', text: 'Caviar', value: 'caviar' },
+    { key: 'seamless', text: 'Seamless', value: 'seamless' },
+    { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
+  ];
 
   const handleFilterWordChange = (e, { name, value }) => {
     let tempFilters = tempSearchFilters;
     tempFilters.filterWord = value;
+    setTempSearchFilters(tempFilters);
+  };
+
+  const handleAllowedAppsChange = (e, { name, value }) => {
+    let tempFilters = tempSearchFilters;
+    tempFilters.allowedApps = value;
     setTempSearchFilters(tempFilters);
   };
 
@@ -55,7 +77,9 @@ export const SearchModal = () => {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={<Button style={{ marginLeft: '-36px' }}>Search Restaurants</Button>}
+      trigger={
+        <Button style={{ marginLeft: '-36px' }}>Search Restaurants</Button>
+      }
     >
       <Modal.Header>Search for Restaurants</Modal.Header>
       <Modal.Content>
@@ -97,6 +121,19 @@ export const SearchModal = () => {
               }
             }}
           />
+
+          <Form.Field>
+            <label>Third-party Apps</label>
+            <Dropdown
+              placeholder='Delivery apps allowed as result'
+              fluid
+              multiple
+              selection
+              defaultValue={searchFilters.allowedApps}
+              options={allowedAppsOptions}
+              onChange={handleAllowedAppsChange}
+            />
+          </Form.Field>
         </Form>
       </Modal.Content>
       <Modal.Actions>

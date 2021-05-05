@@ -6,5 +6,6 @@ export interface SearchFilters {
       lng: number
     },
   }
-  filterWord: string
+  filterWord: string,
+  allowedApps: string[]
 }
