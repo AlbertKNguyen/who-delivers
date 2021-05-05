@@ -14,6 +14,7 @@ const Home: NextPage = () => {
       location: null,
     },
     filterWord: '',
+    allowedApps: []
   });
 
   return (

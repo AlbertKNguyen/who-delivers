@@ -8,6 +8,7 @@ interface Request {
   query: {
     place_id: string;
     search: string;
+    'allowed_apps[]'?: string[];
     key: string;
   };
 }
@@ -47,22 +48,23 @@ export default async (req: Request, res) => {
             const href = $(link).attr('href');
 
             if (
+              href.includes('http') &&
               !href.includes('yelp') &&
               !href.includes('yahoo') &&
               !href.includes('bing') &&
-              !href.includes('mapquest') &&
-              href.includes('http')
+              !href.includes('mapquest')
             ) {
-              if (href.startsWith('http')) {
-                website_url = href;
-              } else {
-                website_url = href.substr(
-                  7,
-                  $(link).attr('href').indexOf('&sa') - 7
-                );
-              }
+              const all_apps = ['doordash', 'grubhub', 'ubereats', 'postmates', 'caviar', 'seamless', 'delivery.com'];
+              if (!all_apps.some(app => href.includes(app))) {
+                url_list =  addToURLList($, link, href, url_list);
+              } else if (req.query['allowed_apps[]']) {
+                let allowed_apps = req.query['allowed_apps[]'];
+                (typeof allowed_apps === 'string') ? allowed_apps = [allowed_apps] : null;
 
-              url_list = Array.from(new Set([...url_list, website_url]));
+                if (allowed_apps.some(app => href.includes(app))) {
+                  url_list = addToURLList($, link, href, url_list);
+                }
+              }
             }
           }
         });
@@ -72,12 +74,26 @@ export default async (req: Request, res) => {
         res.status(500).json({ message: 'Error when retrieving data' });
       }
     } else {
-      res.status(400).json({ message: 'invalid_request_type' });
+      res.status(400).json({ message: 'invalid_request' });
     }
   } else {
     res.status(401).json({ message: 'invalid_key' });
   }
 };
+
+const addToURLList = ($, link, href, url_list: string[]) => {
+  let website_url: string;
+
+  if (href.startsWith('http')) {
+    website_url = href;
+  } else {
+    website_url = href.substr(
+      7,
+      $(link).attr('href').indexOf('&sa') - 7
+    );
+  }
+  return url_list = Array.from(new Set([...url_list, website_url]));
+}
 
 const findURLsDocument = async (place_id: string) => {
   let urls: string[] = [];

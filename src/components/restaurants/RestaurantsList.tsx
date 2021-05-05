@@ -3,19 +3,13 @@ import { createRef, MutableRefObject, useEffect, useMemo, useRef } from 'react';
 import { Card } from 'semantic-ui-react';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 
-const containerStyle = {
-  width: 'calc(35vw - 6px)',
-  height: 'calc(100vh - 48px)',
-  overflow: 'auto',
-  marginLeft: '5px'
-};
-
 interface Location {
   lat: number;
   lng: number;
 }
 
 interface Props {
+  style: React.CSSProperties;
   addressLocation: Location;
   restaurantList: any[];
   infoWindow: RestaurantInfoWindow;
@@ -23,6 +17,7 @@ interface Props {
 }
 
 export const RestaurantsList = ({
+  style,
   addressLocation,
   restaurantList,
   infoWindow,
@@ -107,7 +102,7 @@ export const RestaurantsList = ({
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={style}>
       {restaurantList.map((restaurant, index) => {
         return CardComponent(restaurant, index);
       })}
