@@ -30,7 +30,7 @@ export const NavBar = () => {
         </Default>
 
         {locationPath === '/' && (
-          <Menu.Item>
+          <Menu.Item style={{ margin: 'auto' }}>
             <SearchModal />
           </Menu.Item>
         )}

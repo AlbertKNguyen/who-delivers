@@ -94,22 +94,22 @@ const addToURLList = ($, link, href, url_list: string[]) => {
   return url_list = Array.from(new Set([...url_list, website_url]));
 }
 
-const findURLsDocument = async (place_id: string) => {
-  let urls: string[] = [];
-  const query = { place_id: place_id };
-  const collection = client.db('restaurants').collection('urls');
+// const findURLsDocument = async (place_id: string) => {
+//   let urls: string[] = [];
+//   const query = { place_id: place_id };
+//   const collection = client.db('restaurants').collection('urls');
 
-  const data = await collection.findOne(query);
-  if (data !== null) {
-    urls = data.urls;
-  }
+//   const data = await collection.findOne(query);
+//   if (data !== null) {
+//     urls = data.urls;
+//   }
 
-  return urls;
-};
+//   return urls;
+// };
 
-const insertURLsDocument = async (place_id: string, url_list: string[]) => {
-  const collection = client.db('restaurants').collection('urls');
+// const insertURLsDocument = async (place_id: string, url_list: string[]) => {
+//   const collection = client.db('restaurants').collection('urls');
 
-  const document = { place_id: place_id, urls: url_list };
-  const result = await collection.insert(document);
-};
+//   const document = { place_id: place_id, urls: url_list };
+//   const result = await collection.insert(document);
+// };

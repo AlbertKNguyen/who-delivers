@@ -69,23 +69,16 @@ export const SearchModal = () => {
     }
   };
 
-  // Get old filters
-  useEffect(() => {
-    if (searchFilters.address.street) {
-      setTempSearchFilters(searchFilters);
-    }
-  }, []);
-
   return (
     <Modal
-      style={{ maxHeight: '100vw', maxWidth: '100vw' }}
+      style={{ maxHeight: '100vh', maxWidth: '100vw' }}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
       trigger={
-        <div style={{ transform: 'translateY(7px)'}}>
+        <div style={{ marginTop: '-7px' }}>
           {isMobile ? (
-            <Button style={{ marginLeft: 'calc(50vw - 100px)' }}>Search Restaurants</Button>
+            <Button>Search Restaurants</Button>
           ) : (
             <Button style={{ marginLeft: '-33px' }}>Search Restaurants</Button>
           )}
@@ -121,8 +114,8 @@ export const SearchModal = () => {
           </Form.Field>
 
           <Form.Input
-            label='Filter'
-            placeholder='Filter by word (food/cuisine)'
+            label='Filter Word'
+            placeholder='Filter by word(s) (food/cuisine)'
             name='filterWord'
             defaultValue={searchFilters.filterWord}
             onChange={handleFilterWordChange}
