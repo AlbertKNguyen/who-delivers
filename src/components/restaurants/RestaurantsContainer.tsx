@@ -60,21 +60,6 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     setInfoWindow(infoWindow);
   };
 
-  // useEffect(() => {
-  //   if (isNotMobile) {
-  //     mapStyle = {
-  //       float: 'left',
-  //       width: '65vw',
-  //       height: 'calc(100vh - 48px)',
-  //     };
-  //   } else {
-  //     mapStyle = {
-  //       width: '100vw',
-  //       height: 'calc(100vh - 48px)',
-  //     };
-  //   }
-  // }, [isNotMobile]);
-
   useEffect(() => {
     if (searchFilters.address.location !== null) {
       const getNearbyRestaurants = async () => {
