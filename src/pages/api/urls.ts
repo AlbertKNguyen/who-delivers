@@ -30,7 +30,7 @@ export default async (req: Request, res) => {
   if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
       try {
-        const url = `${search_engines[1]}${req.query.search}`;
+        const url = encodeURI(`${search_engines[1]}${req.query.search}`);
         const { data } = await axios.get(url, config);
         const $ = cheerio.load(data);
 
