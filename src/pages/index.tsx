@@ -1,6 +1,5 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { Grid } from 'semantic-ui-react';
 import { NavBar } from '../components/navbar/NavBar';
 import { RestaurantsContainer } from '../components/restaurants/RestaurantsContainer';
 import React, { useState } from 'react';

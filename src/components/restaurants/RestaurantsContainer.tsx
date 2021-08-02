@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
