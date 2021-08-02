@@ -11,13 +11,12 @@ import { SearchFilters } from '../../models/SearchFilters.model';
 import { AddressSearch } from './AddressSearch';
 import { AddressSearchContext } from '../../contexts/AddressSearchContext';
 import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
-import { useMediaQuery } from 'react-responsive';
+import styles from './SearchModal.module.css'
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [saveAddress, setSaveAddress] = useState<boolean>(true);
   const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
-  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
     address: {
@@ -38,17 +37,23 @@ export const SearchModal = () => {
     { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
   ];
 
-  const handleFilterWordChange = useCallback((e, { name, value }) => {
-    let tempFilters = tempSearchFilters;
-    tempFilters.filterWord = value;
-    setTempSearchFilters(tempFilters);
-  }, [tempSearchFilters]);
+  const handleFilterWordChange = useCallback(
+    (e, { value }) => {
+      let tempFilters = tempSearchFilters;
+      tempFilters.filterWord = value;
+      setTempSearchFilters(tempFilters);
+    },
+    [tempSearchFilters]
+  );
 
-  const handleAllowedAppsChange = useCallback((e, { name, value }) => {
-    let tempFilters = tempSearchFilters;
-    tempFilters.allowedApps = value;
-    setTempSearchFilters(tempFilters);
-  }, [tempSearchFilters]);
+  const handleAllowedAppsChange = useCallback(
+    (e, { value }) => {
+      let tempFilters = tempSearchFilters;
+      tempFilters.allowedApps = value;
+      setTempSearchFilters(tempFilters);
+    },
+    [tempSearchFilters]
+  );
 
   const handleSubmit = () => {
     if (tempSearchFilters.address.street) {
@@ -71,17 +76,11 @@ export const SearchModal = () => {
     }
   };
 
-  const SearchButton = useCallback((): ReactElement => {
-    return (
-      <div style={{ marginTop: '-7px' }}>
-        {isMobile ? (
-          <Button>Search Restaurants</Button>
-        ) : (
-          <Button style={{ marginLeft: '-33px' }}>Search Restaurants</Button>
-        )}
-      </div>
-    );
-  }, [isMobile]);
+  const SearchButton = (
+    <div style={{ marginTop: '-7px' }}>
+      <Button className={styles['search-button']}>Search Restaurants</Button>
+    </div>
+  );
 
   return (
     <Modal
@@ -89,7 +88,7 @@ export const SearchModal = () => {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={SearchButton()}
+      trigger={SearchButton}
     >
       <Modal.Header>Search for Restaurants</Modal.Header>
       <Modal.Content>
