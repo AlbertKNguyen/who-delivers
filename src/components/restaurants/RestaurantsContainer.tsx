@@ -140,49 +140,53 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     }
   }, [searchFilters]);
 
+  if (isLoading) {
+    return (
+      <Loader style={{ marginLeft: '9px' }} active>
+        Finding restaurants...
+      </Loader>
+    );
+  }
+
+  if (errorOccured && !restaurantList.length) {
+    return (
+      <div style={centerStyle}>
+        <h1>
+          Error occured
+          <br />
+          Try refreshing the page
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <>
       {searchFilters.address.location !== null ? (
         <>
-          {!isLoading ? (
+          {restaurantList.length > 0 ? (
             <>
-              {restaurantList.length > 0 ? (
-                <>
-                  <RestaurantsMap
-                    style={mapStyle}
-                    infoWindow={infoWindow}
-                    updateInfoWindow={updateRestaurantInfoWindow}
-                    addressLocation={searchFilters.address.location}
-                    restaurantList={restaurantList}
-                  />
-                  {isNotMobile && (
-                    <RestaurantsList
-                      style={listStyle}
-                      infoWindow={infoWindow}
-                      updateInfoWindow={updateRestaurantInfoWindow}
-                      addressLocation={searchFilters.address.location}
-                      restaurantList={restaurantList}
-                    />
-                  )}
-                </>
-              ) : (
-                <div style={centerStyle}>
-                  {errorOccured ? (
-                    <h1>
-                      Error occured
-                      <br />
-                      Try refreshing the page
-                    </h1>
-                  ) : (
-                    <h1>No restaurants found</h1>
-                  )}
-                </div>
+              <RestaurantsMap
+                style={mapStyle}
+                infoWindow={infoWindow}
+                updateInfoWindow={updateRestaurantInfoWindow}
+                addressLocation={searchFilters.address.location}
+                restaurantList={restaurantList}
+              />
+              {isNotMobile && (
+                <RestaurantsList
+                  style={listStyle}
+                  infoWindow={infoWindow}
+                  updateInfoWindow={updateRestaurantInfoWindow}
+                  addressLocation={searchFilters.address.location}
+                  restaurantList={restaurantList}
+                />
               )}
             </>
           ) : (
-            <Loader style={{ marginLeft: '9px' }} active>
-              Finding restaurants...
-            </Loader>
+            <div style={centerStyle}>
+              <h1>No restaurants found</h1>
+            </div>
           )}
         </>
       ) : (

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState, ReactElement } from 'react';
 import {
   Button,
   Checkbox,
@@ -16,6 +16,9 @@ import { useMediaQuery } from 'react-responsive';
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [saveAddress, setSaveAddress] = useState<boolean>(true);
+  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+
   const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
     address: {
       street: null,
@@ -24,7 +27,7 @@ export const SearchModal = () => {
     filterWord: '',
     allowedApps: [],
   });
-  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
+
   const allowedAppsOptions = [
     { key: 'doordash', text: 'DoorDash', value: 'doordash' },
     { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
@@ -34,19 +37,18 @@ export const SearchModal = () => {
     { key: 'seamless', text: 'Seamless', value: 'seamless' },
     { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
   ];
-  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
-  const handleFilterWordChange = (e, { name, value }) => {
+  const handleFilterWordChange = useCallback((e, { name, value }) => {
     let tempFilters = tempSearchFilters;
     tempFilters.filterWord = value;
     setTempSearchFilters(tempFilters);
-  };
+  }, [tempSearchFilters]);
 
-  const handleAllowedAppsChange = (e, { name, value }) => {
+  const handleAllowedAppsChange = useCallback((e, { name, value }) => {
     let tempFilters = tempSearchFilters;
     tempFilters.allowedApps = value;
     setTempSearchFilters(tempFilters);
-  };
+  }, [tempSearchFilters]);
 
   const handleSubmit = () => {
     if (tempSearchFilters.address.street) {
@@ -69,21 +71,25 @@ export const SearchModal = () => {
     }
   };
 
+  const SearchButton = useCallback((): ReactElement => {
+    return (
+      <div style={{ marginTop: '-7px' }}>
+        {isMobile ? (
+          <Button>Search Restaurants</Button>
+        ) : (
+          <Button style={{ marginLeft: '-33px' }}>Search Restaurants</Button>
+        )}
+      </div>
+    );
+  }, [isMobile]);
+
   return (
     <Modal
       style={{ maxHeight: '100vh', maxWidth: '100vw' }}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={
-        <div style={{ marginTop: '-7px' }}>
-          {isMobile ? (
-            <Button>Search Restaurants</Button>
-          ) : (
-            <Button style={{ marginLeft: '-33px' }}>Search Restaurants</Button>
-          )}
-        </div>
-      }
+      trigger={SearchButton()}
     >
       <Modal.Header>Search for Restaurants</Modal.Header>
       <Modal.Content>
