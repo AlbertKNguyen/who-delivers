@@ -26,7 +26,7 @@ export const RestaurantsList = ({
   const cardRefList: MutableRefObject<any>[] = [];
 
   useEffect(() => {
-    if (infoWindow.open === true) {
+    if (infoWindow.open) {
       cardRefList[infoWindow.index].current.scrollIntoView({
         behavior: 'smooth',
       });
