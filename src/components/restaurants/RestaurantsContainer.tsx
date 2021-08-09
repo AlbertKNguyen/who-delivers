@@ -5,6 +5,8 @@ import { Loader } from 'semantic-ui-react';
 import { SearchFilters } from '../../models/SearchFilters.model';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 import { useMediaQuery } from 'react-responsive';
+import Image from 'next/image';
+import { useSpring, animated } from '@react-spring/web';
 const axios = require('axios').default;
 
 const centerStyle = {
@@ -140,6 +142,23 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     }
   }, [searchFilters]);
 
+  const UpArrow = () => {
+    const styles = useSpring({
+      loop: true,
+      to: [
+        { translateY: '10px' },
+        { translateY: '0px' },
+      ],
+      from: { translateY: '0px', opacity: 1 },
+    });
+
+    return (
+      <animated.div style={styles}>
+        <Image src='/arrow-up-sharp.svg' height={100} width={100} />
+      </animated.div>
+    );
+  }
+
   if (isLoading) {
     return (
       <Loader style={{ marginLeft: '9px' }} active>
@@ -190,27 +209,11 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
           )}
         </>
       ) : (
-        <h1 style={centerStyle}>
-          Click the 'Search Restaurants' button above to start your search
-        </h1>
+        <div style={{ textAlign: 'center' }}>
+          <UpArrow />
+          <h1>Click Here to Start Your Search</h1>
+        </div>
       )}
     </>
   );
 };
-
-// const getRestaurantsDetails = async (searchResults) => {
-//   const promisedDetails = searchResults.map(async (place) => {
-//     if (!place.name.includes('pizza')) {
-//       const placeData = await axios.get('/api/search', {
-//         params: {
-//           url: `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_KEY}&place_id=${place.place_id}&fields=formatted_address,geometry,name,photos,place_id,type,url,website`,
-//           key: process.env.SECRET_KEY,
-//         },
-//       });
-//       const placeDetail = placeData.data.result;
-//       placeDetail.urls = place.urls;
-//       return placeDetail;
-//     }
-//   });
-//   return Promise.all(promisedDetails);
-// };
