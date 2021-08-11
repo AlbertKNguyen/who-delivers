@@ -161,7 +161,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
 
   if (isLoading) {
     return (
-      <Loader style={{ marginLeft: '9px' }} active>
+      <Loader active>
         Finding restaurants...
       </Loader>
     );
