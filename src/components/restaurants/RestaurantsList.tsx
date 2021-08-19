@@ -25,6 +25,7 @@ export const RestaurantsList = ({
 }: Props) => {
   const cardRefList: MutableRefObject<any>[] = [];
 
+  // Scrolls list card into full view on restaurant select
   useEffect(() => {
     if (infoWindow.open) {
       cardRefList[infoWindow.index].current.scrollIntoView({

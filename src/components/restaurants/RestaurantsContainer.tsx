@@ -29,6 +29,17 @@ interface Props {
 
 export const RestaurantsContainer = ({ searchFilters }: Props) => {
   const [restaurantList, setRestaurantList] = useState([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorOccured, setErrorOccured] = useState<boolean>(false);
+  const isNotMobile = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const mapStyle = {
+    float: 'left',
+    width: isNotMobile ? '65vw' : '100vw',
+    height: 'calc(100vh - 48px)',
+  } as React.CSSProperties;
+
+  // Current selected restaurant
   const [infoWindow, setInfoWindow] = useState<RestaurantInfoWindow>({
     open: false,
     name: '',
@@ -37,14 +48,6 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     location: null,
     index: 0,
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorOccured, setErrorOccured] = useState<boolean>(false);
-  const isNotMobile = useMediaQuery({ query: '(min-width: 768px)' });
-  const mapStyle = {
-    float: 'left',
-    width: isNotMobile ? '65vw' : '100vw',
-    height: 'calc(100vh - 48px)',
-  } as React.CSSProperties;
 
   const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
@@ -62,6 +65,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     setInfoWindow(infoWindow);
   };
 
+  // Update restaurants on new search
   useEffect(() => {
     if (searchFilters.address.location !== null) {
       const getNearbyRestaurants = async () => {
