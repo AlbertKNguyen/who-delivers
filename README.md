@@ -16,6 +16,7 @@ WhoDelivers is a food delivery search app that prioritizes a restaurant's own/pr
     - Word filter ✔️
     - Allowed delivery apps filter ✔️
     - Allow filter to only show restaurants that use selected delivery apps
+  - Result list filtering/ordering
   - Add '/about' page
 
 ## How to run locally
