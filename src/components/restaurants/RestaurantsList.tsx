@@ -1,7 +1,12 @@
-import { InfoWindow } from '@react-google-maps/api';
-import { createRef, MutableRefObject, useEffect, useMemo, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import { Card } from 'semantic-ui-react';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
+
+const CardStyle = {
+  marginLeft: '1px', 
+  width: '99%',
+  marginTop: '5px',
+} as React.CSSProperties;
 
 interface Location {
   lat: number;
@@ -25,10 +30,12 @@ export const RestaurantsList = ({
 }: Props) => {
   const cardRefList: MutableRefObject<any>[] = [];
 
+  // Scrolls list card into full view on restaurant select
   useEffect(() => {
     if (infoWindow.open) {
       cardRefList[infoWindow.index].current.scrollIntoView({
         behavior: 'smooth',
+        block: 'center',
       });
     }
   }, [infoWindow]);
@@ -53,10 +60,20 @@ export const RestaurantsList = ({
     const cardRef = useRef(null);
     cardRefList[index] = cardRef;
 
+    let selectedStyle = {} as React.CSSProperties;
+    if (infoWindow.open && index === infoWindow.index) {
+      selectedStyle.borderLeft = '5px solid red';
+    }
+
+    let lastCardStyle = {} as React.CSSProperties;
+    if (index === restaurantList.length - 1) {
+      lastCardStyle.marginBottom = '5px';
+    }
+
     return (
       <div ref={cardRef} key={restaurant.place_id}>
         <Card
-          style={{ marginLeft: '1px', width: '99%' }}
+          style={{ ...CardStyle, ...selectedStyle, ...lastCardStyle }}
           header={restaurant.name}
           meta={distanceInMiles(
             addressLocation.lat,

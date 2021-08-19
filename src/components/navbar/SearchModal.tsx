@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, ReactElement } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import {
   Button,
   Checkbox,
