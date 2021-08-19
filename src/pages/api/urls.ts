@@ -1,8 +1,6 @@
 import cheerio from 'cheerio';
 import axios from 'axios-https-proxy-fix';
 
-let client;
-
 interface Request {
   method: string;
   query: {
@@ -26,6 +24,7 @@ const search_engines = [
   'https://www.bing.com/maps?q=',
 ];
 
+// Get all delivery urls of restaurant
 export default async (req: Request, res) => {
   if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
@@ -37,14 +36,15 @@ export default async (req: Request, res) => {
         let url_list: string[] = [];
         const links = $('a');
 
-        $($('a')).each((i, link) => {
+        // Check every link/url for if its a delivery link/url
+        $($('a')).each(async (i, link) => {
           const link_title = $(link).text();
           if (
             link_title.includes('Delivery') ||
             link_title.includes('Order') ||
             link_title.includes('Website')
           ) {
-            const href = $(link).attr('href');
+            let href = $(link).attr('href');
 
             if (
               href.includes('http') &&
@@ -53,14 +53,25 @@ export default async (req: Request, res) => {
               !href.includes('bing') &&
               !href.includes('mapquest')
             ) {
+              // Get redirect url as it may be possible delivery app url
+              if (href.includes('redirect')) {
+                try {
+                  href = await getRedirectUrl(href);
+                } catch ({ response }) {
+                  console.log(`Failed to get redirect url: ${response.statusText}`)
+                }
+              }
+
               const all_apps = ['doordash', 'grubhub', 'ubereats', 'postmates', 'caviar', 'seamless', 'delivery.com'];
               if (!all_apps.some(app => href.includes(app))) {
+                // Add non-delivery app link
                 url_list = addToURLList($, link, href, url_list);
               } else if (req.query['allowed_apps[]']) {
                 let allowed_apps = req.query['allowed_apps[]'];
                 (typeof allowed_apps === 'string') ? allowed_apps = [allowed_apps] : null;
 
                 if (allowed_apps.some(app => href.includes(app))) {
+                  // Add delivery app link
                   url_list = addToURLList($, link, href, url_list);
                 }
               }
@@ -80,7 +91,7 @@ export default async (req: Request, res) => {
   }
 };
 
-const addToURLList = ($, link, href, url_list: string[]) => {
+const addToURLList = ($, link, href, url_list: string[]): string[] => {
   let website_url: string;
 
   if (href.startsWith('http')) {
@@ -94,22 +105,8 @@ const addToURLList = ($, link, href, url_list: string[]) => {
   return url_list = Array.from(new Set([...url_list, website_url]));
 }
 
-// const findURLsDocument = async (place_id: string) => {
-//   let urls: string[] = [];
-//   const query = { place_id: place_id };
-//   const collection = client.db('restaurants').collection('urls');
-
-//   const data = await collection.findOne(query);
-//   if (data !== null) {
-//     urls = data.urls;
-//   }
-
-//   return urls;
-// };
-
-// const insertURLsDocument = async (place_id: string, url_list: string[]) => {
-//   const collection = client.db('restaurants').collection('urls');
-
-//   const document = { place_id: place_id, urls: url_list };
-//   const result = await collection.insert(document);
-// };
+const getRedirectUrl = async (href: string) => {
+  const response = await axios.get(href, config);
+  const url = response.request.res.responseUrl;
+  return url;
+}
