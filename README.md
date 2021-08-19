@@ -8,7 +8,7 @@ WhoDelivers is a food delivery search app that prioritizes a restaurant's own/pr
 
   - Implement function to find preferred delivery service
     - Restaurant urls from search engine ✔️
-    - Get redirected urls
+    - Get redirected urls ✔️
   - Responsive design/mobile experience
     - Card list of restaurants ✔️
     - Mobile responsiveness ✔️
