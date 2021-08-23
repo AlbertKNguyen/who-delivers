@@ -124,8 +124,10 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
               Promise.resolve([])
             );
 
-            // Add to list
-            tempRestaurantList = [...tempRestaurantList, ...searchResults];
+            if (searchResults?.length) {
+              // Add to list
+              tempRestaurantList = [...tempRestaurantList, ...searchResults];
+            }
 
             pageToken = searchResponse.next_page_token;
             pages++;
