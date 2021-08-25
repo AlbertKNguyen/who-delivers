@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
@@ -48,6 +48,17 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     location: null,
     index: 0,
   });
+
+  const resetInfoWindow = useCallback(() => {
+    setInfoWindow({
+      open: false,
+      name: '',
+      urls: [],
+      imageURL: '',
+      location: null,
+      index: 0,
+    });
+  },[])
 
   const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
@@ -142,6 +153,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       };
 
       (async () => {
+        resetInfoWindow();
         setRestaurantList(await getNearbyRestaurants());
         setIsLoading(false);
       })();
