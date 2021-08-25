@@ -15,7 +15,7 @@ import styles from './SearchModal.module.css'
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [saveAddress, setSaveAddress] = useState<boolean>(true);
+  const [saveAddress, setSaveAddress] = useState<boolean>(false);
   const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
 
   const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
