@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import { Place } from '../../models/Place.model';
 
@@ -17,15 +17,12 @@ export const AddressSearch = () => {
           lat: Number(address.location.lat),
           lng: Number(address.location.lng),
         };
-        let tempFilters = {
-          address: {
-            street: address.street,
-            location: location,
-          },
-          filterWord: tempSearchFilters.filterWord,
-          allowedApps: tempSearchFilters.allowedApps
-        };
-        setTempSearchFilters(tempFilters);
+        setTempSearchFilters((prevTempSearchFilters) => {
+          return {
+            ...prevTempSearchFilters,
+            address: { location, street: address.street },
+          };
+        });
       }
     } catch (error) {
       console.log(error);
@@ -33,18 +30,20 @@ export const AddressSearch = () => {
     }
   }, []);
 
-  const onPlaceSelected = (place: Place) => {
+  const onPlaceSelected = useCallback((place: Place) => {
     if (place.geometry) {
       const location = {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       };
-      let tempFilters = tempSearchFilters;
-      tempFilters.address.location = location;
-      tempFilters.address.street = place.formatted_address;
-      setTempSearchFilters(tempFilters);
+      setTempSearchFilters((prevTempSearchFilters) => {
+        return {
+          ...prevTempSearchFilters,
+          address: { location, street: place.formatted_address },
+        };
+      });
     }
-  };
+  }, []);
 
   return (
     <Autocomplete

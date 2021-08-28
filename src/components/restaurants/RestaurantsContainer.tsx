@@ -58,9 +58,13 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       location: null,
       index: 0,
     });
-  },[])
+  }, []);
 
-  const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
+  const updateRestaurantInfoWindow = useCallback((infoWindow: RestaurantInfoWindow) => {
+    setInfoWindow(infoWindow);
+  }, []);
+
+  const getRestaurantsURLs = useCallback(async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
       params: {
         place_id: place_id,
@@ -70,11 +74,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       },
     });
     return data.urls;
-  };
-
-  const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
-    setInfoWindow(infoWindow);
-  };
+  }, []);
 
   // Update restaurants on new search
   useEffect(() => {
@@ -160,14 +160,11 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     }
   }, [searchFilters]);
 
-  const UpArrow = () => {
+  const UpArrow = useCallback(() => {
     const styles = useSpring({
       loop: true,
-      to: [
-        { translateY: '10px' },
-        { translateY: '0px' },
-      ],
-      from: { translateY: '0px', opacity: 1 },
+      to: [{ translateY: '10px' }, { translateY: '0px' }],
+      from: { translateY: '0px' },
     });
 
     return (
@@ -175,14 +172,10 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
         <Image src='/arrow-up-sharp.svg' height={100} width={100} />
       </animated.div>
     );
-  }
+  }, []);
 
   if (isLoading) {
-    return (
-      <Loader active>
-        Finding restaurants...
-      </Loader>
-    );
+    return <Loader active>Finding restaurants...</Loader>;
   }
 
   if (errorOccured && !restaurantList.length) {

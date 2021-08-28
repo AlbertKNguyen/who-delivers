@@ -39,18 +39,24 @@ export const SearchModal = () => {
 
   const handleFilterWordChange = useCallback(
     (e, { value }) => {
-      let tempFilters = tempSearchFilters;
-      tempFilters.filterWord = value;
-      setTempSearchFilters(tempFilters);
+      setTempSearchFilters((prevTempSearchFilters) => {
+        return {
+          ...prevTempSearchFilters,
+          filterWord: value,
+        };
+      });
     },
     [tempSearchFilters]
   );
 
   const handleAllowedAppsChange = useCallback(
     (e, { value }) => {
-      let tempFilters = tempSearchFilters;
-      tempFilters.allowedApps = value;
-      setTempSearchFilters(tempFilters);
+      setTempSearchFilters((prevTempSearchFilters) => {
+        return {
+          ...prevTempSearchFilters,
+          allowedApps: value,
+        };
+      });
     },
     [tempSearchFilters]
   );

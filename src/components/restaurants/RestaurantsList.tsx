@@ -3,7 +3,7 @@ import { Card } from 'semantic-ui-react';
 import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 
 const CardStyle = {
-  marginLeft: '1px', 
+  marginLeft: '1px',
   width: '99%',
   marginTop: '5px',
 } as React.CSSProperties;

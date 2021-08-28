@@ -30,7 +30,7 @@ export const RestaurantsMap = ({
 }: Props) => {
   const [center, setCenter] = useState<Location>(addressLocation);
 
-  // Center onto address on every search 
+  // Center onto address on every search
   useEffect(() => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
