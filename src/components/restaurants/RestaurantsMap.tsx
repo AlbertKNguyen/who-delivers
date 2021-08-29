@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api';
-import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
-const axios = require('axios').default;
+import { SelectedRestaurantInfo } from '../../models/SelectedRestaurantInfo.model';
 
 const mapOptions: google.maps.MapOptions = {
   mapTypeControl: false,
@@ -17,20 +16,22 @@ interface Props {
   style: React.CSSProperties;
   addressLocation: Location;
   restaurantList: any[];
-  infoWindow: RestaurantInfoWindow;
-  updateInfoWindow: (infoWindow: RestaurantInfoWindow) => void;
+  selectedRestaurant: SelectedRestaurantInfo;
+  updateSelectedRestaurant: (selectedRestaurant: SelectedRestaurantInfo) => void;
+  resetSelectedRestaurant: () => void;
 }
 
 export const RestaurantsMap = ({
   style,
   addressLocation,
   restaurantList,
-  infoWindow,
-  updateInfoWindow,
+  selectedRestaurant,
+  updateSelectedRestaurant,
+  resetSelectedRestaurant,
 }: Props) => {
   const [center, setCenter] = useState<Location>(addressLocation);
 
-  // Center onto address on every search 
+  // Center onto address on every search
   useEffect(() => {
     if (addressLocation !== null) {
       setCenter(addressLocation);
@@ -39,12 +40,7 @@ export const RestaurantsMap = ({
 
   const renderMap = () => {
     return (
-      <GoogleMap
-        mapContainerStyle={style}
-        center={center}
-        zoom={14}
-        options={mapOptions}
-      >
+      <GoogleMap mapContainerStyle={style} center={center} zoom={14} options={mapOptions}>
         <Marker position={addressLocation} title='Home' />
 
         {restaurantList.map((restaurant, index) => {
@@ -55,17 +51,14 @@ export const RestaurantsMap = ({
                 label={{ text: restaurant.name, fontSize: '12px' }}
                 icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
                 onClick={() => {
-                  let infoWindowLocation = Object.assign(
-                    {},
-                    restaurant.geometry.location
-                  );
-                  infoWindowLocation.lat += 0.002;
-                  updateInfoWindow({
+                  let selectedRestaurantLocation = Object.assign({}, restaurant.geometry.location);
+                  selectedRestaurantLocation.lat += 0.002;
+                  updateSelectedRestaurant({
                     open: true,
                     name: restaurant.name,
                     urls: restaurant.urls,
                     imageURL: '',
-                    location: infoWindowLocation,
+                    location: selectedRestaurantLocation,
                     index: index,
                   });
                 }}
@@ -73,34 +66,17 @@ export const RestaurantsMap = ({
             </div>
           );
         })}
-        {infoWindow.open && (
+        {selectedRestaurant.open && (
           <InfoWindow
-            position={infoWindow.location}
-            onCloseClick={() => {
-              updateInfoWindow({
-                open: false,
-                name: '',
-                urls: [],
-                imageURL: '',
-                location: null,
-                index: 0,
-              });
-            }}
+            position={selectedRestaurant.location}
+            onCloseClick={resetSelectedRestaurant}
           >
             <div>
-              {infoWindow.name}
-              {infoWindow.urls.map((url, index) => {
+              {selectedRestaurant.name}
+              {selectedRestaurant.urls.map((url, index) => {
                 return (
-                  <li
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                    key={index}
-                  >
-                    <a
-                      style={{ display: 'inline' }}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      href={url}
-                    >
+                  <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
+                    <a style={{ display: 'inline' }} target='_blank' rel='noopener noreferrer' href={url}>
                       {url}
                     </a>
                   </li>

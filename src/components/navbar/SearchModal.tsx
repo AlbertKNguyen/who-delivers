@@ -1,64 +1,66 @@
-import React, { useCallback, useContext, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Form,
-  Modal,
-  Popup,
-} from 'semantic-ui-react';
-import { SearchFilters } from '../../models/SearchFilters.model';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Checkbox, Dropdown, Form, Modal, Popup } from 'semantic-ui-react';
+import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
+import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';
 import { AddressSearch } from './AddressSearch';
-import { AddressSearchContext } from '../../contexts/AddressSearchContext';
-import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
-import styles from './SearchModal.module.css'
+import styles from './SearchModal.module.css';
+
+const ALLOWED_APPS = [
+  { key: 'doordash', text: 'DoorDash', value: 'doordash' },
+  { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
+  { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
+  { key: 'postmates', text: 'Postmates', value: 'postmates' },
+  { key: 'caviar', text: 'Caviar', value: 'caviar' },
+  { key: 'seamless', text: 'Seamless', value: 'seamless' },
+  { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
+];
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [saveAddress, setSaveAddress] = useState<boolean>(false);
-  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
+  const { searchFilters, setSearchFilters } = useSearchFiltersContext();
+  const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
 
-  const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
-    address: {
-      street: null,
-      location: null,
-    },
-    filterWord: '',
-    allowedApps: [],
-  });
-
-  const allowedAppsOptions = [
-    { key: 'doordash', text: 'DoorDash', value: 'doordash' },
-    { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
-    { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
-    { key: 'postmates', text: 'Postmates', value: 'postmates' },
-    { key: 'caviar', text: 'Caviar', value: 'caviar' },
-    { key: 'seamless', text: 'Seamless', value: 'seamless' },
-    { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
-  ];
+  // Set initial value of saveAddress
+  useEffect(() => {
+    try {
+      const address = JSON.parse(window.localStorage.getItem('address'));
+      if (address) {
+        setSaveAddress(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
   const handleFilterWordChange = useCallback(
     (e, { value }) => {
-      let tempFilters = tempSearchFilters;
-      tempFilters.filterWord = value;
-      setTempSearchFilters(tempFilters);
+      setTempSearchFilters(prevTempSearchFilters => {
+        return {
+          ...prevTempSearchFilters,
+          filterWord: value,
+        };
+      });
     },
     [tempSearchFilters]
   );
 
   const handleAllowedAppsChange = useCallback(
     (e, { value }) => {
-      let tempFilters = tempSearchFilters;
-      tempFilters.allowedApps = value;
-      setTempSearchFilters(tempFilters);
+      setTempSearchFilters(prevTempSearchFilters => {
+        return {
+          ...prevTempSearchFilters,
+          allowedApps: value,
+        };
+      });
     },
     [tempSearchFilters]
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (tempSearchFilters.address.street) {
       setOpen(false);
-      if (JSON.stringify(tempSearchFilters) != JSON.stringify(searchFilters)) {
+      if (JSON.stringify(tempSearchFilters) !== JSON.stringify(searchFilters)) {
         setSearchFilters(tempSearchFilters);
       }
 
@@ -74,7 +76,7 @@ export const SearchModal = () => {
         localStorage.clear();
       }
     }
-  };
+  }, [tempSearchFilters, searchFilters, saveAddress]);
 
   const SearchButton = (
     <div style={{ marginTop: '-7px' }}>
@@ -97,18 +99,15 @@ export const SearchModal = () => {
             label='Address'
             required
             onChange={handleFilterWordChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSubmit();
               }
             }}
           >
-            <AddressSearchContext.Provider
-              value={[tempSearchFilters, setTempSearchFilters]}
-            >
-              <AddressSearch />
-            </AddressSearchContext.Provider>
+            <AddressSearch />
           </Form.Input>
+
           <Form.Field>
             <Checkbox
               checked={saveAddress}
@@ -124,7 +123,7 @@ export const SearchModal = () => {
             name='filterWord'
             defaultValue={searchFilters.filterWord}
             onChange={handleFilterWordChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSubmit();
               }
@@ -139,7 +138,7 @@ export const SearchModal = () => {
               multiple
               selection
               defaultValue={searchFilters.allowedApps}
-              options={allowedAppsOptions}
+              options={ALLOWED_APPS}
               onChange={handleAllowedAppsChange}
             />
           </Form.Field>

@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
-import { SearchFilters } from '../../models/SearchFilters.model';
-import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 import { useMediaQuery } from 'react-responsive';
 import Image from 'next/image';
 import { useSpring, animated } from '@react-spring/web';
+import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
+import { useSelectedRestaurantInfoContext } from '../providers/SelectedRestaurantProvider';
+import { SelectedRestaurantInfo } from '../../models/SelectedRestaurantInfo.model';
 const axios = require('axios').default;
 
 const centerStyle = {
@@ -23,11 +24,9 @@ const listStyle = {
   borderLeft: '1px solid black',
 } as React.CSSProperties;
 
-interface Props {
-  searchFilters: SearchFilters;
-}
-
-export const RestaurantsContainer = ({ searchFilters }: Props) => {
+export const RestaurantsContainer = () => {
+  const { searchFilters } = useSearchFiltersContext();
+  const { selectedRestaurantInfo, setSelectedRestaurantInfo } = useSelectedRestaurantInfoContext();
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
@@ -39,18 +38,8 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
     height: 'calc(100vh - 48px)',
   } as React.CSSProperties;
 
-  // Current selected restaurant
-  const [infoWindow, setInfoWindow] = useState<RestaurantInfoWindow>({
-    open: false,
-    name: '',
-    urls: [],
-    imageURL: '',
-    location: null,
-    index: 0,
-  });
-
-  const resetInfoWindow = useCallback(() => {
-    setInfoWindow({
+  const resetSelectedRestaurant = useCallback(() => {
+    setSelectedRestaurantInfo({
       open: false,
       name: '',
       urls: [],
@@ -58,9 +47,13 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       location: null,
       index: 0,
     });
-  },[])
+  }, []);
 
-  const getRestaurantsURLs = async (place_id: string, searchTerm: string) => {
+  const updateSelectedRestaurant = useCallback((selectedRestaurantInfo: SelectedRestaurantInfo) => {
+    setSelectedRestaurantInfo(selectedRestaurantInfo);
+  }, []);
+
+  const getRestaurantsURLs = useCallback(async (place_id: string, searchTerm: string) => {
     const { data } = await axios.get('/api/urls', {
       params: {
         place_id: place_id,
@@ -70,11 +63,7 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       },
     });
     return data.urls;
-  };
-
-  const updateRestaurantInfoWindow = (infoWindow: RestaurantInfoWindow) => {
-    setInfoWindow(infoWindow);
-  };
+  }, []);
 
   // Update restaurants on new search
   useEffect(() => {
@@ -108,32 +97,24 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
 
             let searchResults = searchResponse.results;
             // Get urls
-            searchResults = await searchResults.reduce(
-              async (promisedResults, place) => {
-                if (!errorOccured) {
-                  await new Promise((r) =>
-                    setTimeout(r, Math.floor(Math.random() * 3000))
-                  );
+            searchResults = await searchResults.reduce(async (promisedResults, place) => {
+              if (!errorOccured) {
+                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 3000)));
 
-                  try {
-                    const urlList = await getRestaurantsURLs(
-                      place.place_id,
-                      `${place.name} ${place.formatted_address}`
-                    );
+                try {
+                  const urlList = await getRestaurantsURLs(place.place_id, `${place.name} ${place.formatted_address}`);
 
-                    if (urlList.length > 0) {
-                      place.urls = urlList;
-                      (await promisedResults).push(place);
-                    }
-                    return promisedResults;
-                  } catch (error) {
-                    setErrorOccured(true);
-                    return promisedResults;
+                  if (urlList.length > 0) {
+                    place.urls = urlList;
+                    (await promisedResults).push(place);
                   }
+                  return promisedResults;
+                } catch (error) {
+                  setErrorOccured(true);
+                  return promisedResults;
                 }
-              },
-              Promise.resolve([])
-            );
+              }
+            }, Promise.resolve([]));
 
             if (searchResults?.length) {
               // Add to list
@@ -153,21 +134,18 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
       };
 
       (async () => {
-        resetInfoWindow();
+        resetSelectedRestaurant();
         setRestaurantList(await getNearbyRestaurants());
         setIsLoading(false);
       })();
     }
   }, [searchFilters]);
 
-  const UpArrow = () => {
+  const UpArrow = useCallback(() => {
     const styles = useSpring({
       loop: true,
-      to: [
-        { translateY: '10px' },
-        { translateY: '0px' },
-      ],
-      from: { translateY: '0px', opacity: 1 },
+      to: [{ translateY: '10px' }, { translateY: '0px' }],
+      from: { translateY: '0px' },
     });
 
     return (
@@ -175,14 +153,10 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
         <Image src='/arrow-up-sharp.svg' height={100} width={100} />
       </animated.div>
     );
-  }
+  }, []);
 
   if (isLoading) {
-    return (
-      <Loader active>
-        Finding restaurants...
-      </Loader>
-    );
+    return <Loader active>Finding restaurants...</Loader>;
   }
 
   if (errorOccured && !restaurantList.length) {
@@ -205,16 +179,17 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
             <>
               <RestaurantsMap
                 style={mapStyle}
-                infoWindow={infoWindow}
-                updateInfoWindow={updateRestaurantInfoWindow}
+                selectedRestaurant={selectedRestaurantInfo}
+                updateSelectedRestaurant={updateSelectedRestaurant}
+                resetSelectedRestaurant={resetSelectedRestaurant}
                 addressLocation={searchFilters.address.location}
                 restaurantList={restaurantList}
               />
               {isNotMobile && (
                 <RestaurantsList
                   style={listStyle}
-                  infoWindow={infoWindow}
-                  updateInfoWindow={updateRestaurantInfoWindow}
+                  selectedRestaurant={selectedRestaurantInfo}
+                  updateSelectedRestaurant={updateSelectedRestaurant}
                   addressLocation={searchFilters.address.location}
                   restaurantList={restaurantList}
                 />
