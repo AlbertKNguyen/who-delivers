@@ -3,7 +3,7 @@ interface Location {
   lng: number;
 }
 
-export interface RestaurantInfoWindow {
+export interface SelectedRestaurantInfo {
   open: boolean;
   name: string;
   urls: string[];

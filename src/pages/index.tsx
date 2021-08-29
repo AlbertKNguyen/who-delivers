@@ -5,6 +5,7 @@ import { RestaurantsContainer } from '../components/restaurants/RestaurantsConta
 import React from 'react';
 import SearchFiltersProvider from '../components/providers/SearchFiltersProvider';
 import TempSearchFiltersProvider from '../components/providers/TempSearchFiltersProvider';
+import SelectedRestaurantInfoProvider from '../components/providers/SelectedRestaurantProvider';
 
 const Home: NextPage = () => {
   return (
@@ -27,7 +28,9 @@ const Home: NextPage = () => {
         <TempSearchFiltersProvider>
           <NavBar />
         </TempSearchFiltersProvider>
-        <RestaurantsContainer />
+        <SelectedRestaurantInfoProvider>
+          <RestaurantsContainer />
+        </SelectedRestaurantInfoProvider>
       </SearchFiltersProvider>
     </>
   );

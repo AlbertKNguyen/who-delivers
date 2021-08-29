@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { RestaurantsMap } from './RestaurantsMap';
 import { RestaurantsList } from './RestaurantsList';
 import { Loader } from 'semantic-ui-react';
-import { SearchFilters } from '../../models/SearchFilters.model';
-import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 import { useMediaQuery } from 'react-responsive';
 import Image from 'next/image';
 import { useSpring, animated } from '@react-spring/web';
 import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
+import { useSelectedRestaurantInfoContext } from '../providers/SelectedRestaurantProvider';
+import { SelectedRestaurantInfo } from '../../models/SelectedRestaurantInfo.model';
 const axios = require('axios').default;
 
 const centerStyle = {
@@ -26,6 +26,7 @@ const listStyle = {
 
 export const RestaurantsContainer = () => {
   const { searchFilters } = useSearchFiltersContext();
+  const { selectedRestaurantInfo, setSelectedRestaurantInfo } = useSelectedRestaurantInfoContext();
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
@@ -37,18 +38,8 @@ export const RestaurantsContainer = () => {
     height: 'calc(100vh - 48px)',
   } as React.CSSProperties;
 
-  // Current selected restaurant
-  const [infoWindow, setInfoWindow] = useState<RestaurantInfoWindow>({
-    open: false,
-    name: '',
-    urls: [],
-    imageURL: '',
-    location: null,
-    index: 0,
-  });
-
-  const resetInfoWindow = useCallback(() => {
-    setInfoWindow({
+  const resetSelectedRestaurant = useCallback(() => {
+    setSelectedRestaurantInfo({
       open: false,
       name: '',
       urls: [],
@@ -58,8 +49,8 @@ export const RestaurantsContainer = () => {
     });
   }, []);
 
-  const updateRestaurantInfoWindow = useCallback((infoWindow: RestaurantInfoWindow) => {
-    setInfoWindow(infoWindow);
+  const updateSelectedRestaurant = useCallback((selectedRestaurantInfo: SelectedRestaurantInfo) => {
+    setSelectedRestaurantInfo(selectedRestaurantInfo);
   }, []);
 
   const getRestaurantsURLs = useCallback(async (place_id: string, searchTerm: string) => {
@@ -143,7 +134,7 @@ export const RestaurantsContainer = () => {
       };
 
       (async () => {
-        resetInfoWindow();
+        resetSelectedRestaurant();
         setRestaurantList(await getNearbyRestaurants());
         setIsLoading(false);
       })();
@@ -188,16 +179,17 @@ export const RestaurantsContainer = () => {
             <>
               <RestaurantsMap
                 style={mapStyle}
-                infoWindow={infoWindow}
-                updateInfoWindow={updateRestaurantInfoWindow}
+                selectedRestaurant={selectedRestaurantInfo}
+                updateSelectedRestaurant={updateSelectedRestaurant}
+                resetSelectedRestaurant={resetSelectedRestaurant}
                 addressLocation={searchFilters.address.location}
                 restaurantList={restaurantList}
               />
               {isNotMobile && (
                 <RestaurantsList
                   style={listStyle}
-                  infoWindow={infoWindow}
-                  updateInfoWindow={updateRestaurantInfoWindow}
+                  selectedRestaurant={selectedRestaurantInfo}
+                  updateSelectedRestaurant={updateSelectedRestaurant}
                   addressLocation={searchFilters.address.location}
                   restaurantList={restaurantList}
                 />
