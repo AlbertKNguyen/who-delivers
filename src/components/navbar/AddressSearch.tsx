@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import { Place } from '../../models/Place.model';
 import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';

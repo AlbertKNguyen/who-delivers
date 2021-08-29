@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Checkbox, Dropdown, Form, Modal, Popup } from 'semantic-ui-react';
 import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
 import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';
@@ -20,6 +20,17 @@ export const SearchModal = () => {
   const [saveAddress, setSaveAddress] = useState<boolean>(false);
   const { searchFilters, setSearchFilters } = useSearchFiltersContext();
   const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
+
+  useEffect(() => {
+    try {
+      const address = JSON.parse(window.localStorage.getItem('address'));
+      if (address) {
+        setSaveAddress(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
   const handleFilterWordChange = useCallback(
     (e, { value }) => {
@@ -95,6 +106,7 @@ export const SearchModal = () => {
           >
             <AddressSearch />
           </Form.Input>
+
           <Form.Field>
             <Checkbox
               checked={saveAddress}
