@@ -21,13 +21,7 @@ interface Props {
   updateInfoWindow: (infoWindow: RestaurantInfoWindow) => void;
 }
 
-export const RestaurantsList = ({
-  style,
-  addressLocation,
-  restaurantList,
-  infoWindow,
-  updateInfoWindow,
-}: Props) => {
+export const RestaurantsList = ({ style, addressLocation, restaurantList, infoWindow, updateInfoWindow }: Props) => {
   const cardRefList: MutableRefObject<any>[] = [];
 
   // Scrolls list card into full view on restaurant select
@@ -40,18 +34,10 @@ export const RestaurantsList = ({
     }
   }, [infoWindow]);
 
-  const distanceInMiles = (
-    lat1: number,
-    lng1: number,
-    lat2: number,
-    lng2: number
-  ): string => {
+  const distanceInMiles = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
     const p = 0.017453292519943295; // Math.PI / 180
     const c = Math.cos;
-    const a =
-      0.5 -
-      c((lat2 - lat1) * p) / 2 +
-      (c(lat1 * p) * c(lat2 * p) * (1 - c((lng2 - lng1) * p))) / 2;
+    const a = 0.5 - c((lat2 - lat1) * p) / 2 + (c(lat1 * p) * c(lat2 * p) * (1 - c((lng2 - lng1) * p))) / 2;
 
     return (7917 * Math.asin(Math.sqrt(a))).toFixed(1) + ' mi'; // 2 * R; R = 7917 mi
   };
@@ -83,26 +69,15 @@ export const RestaurantsList = ({
           )}
           description={restaurant.urls.map((url, index) => {
             return (
-              <li
-                style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                key={index}
-              >
-                <a
-                  style={{ display: 'inline' }}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  href={url}
-                >
+              <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
+                <a style={{ display: 'inline' }} target='_blank' rel='noopener noreferrer' href={url}>
                   {url}
                 </a>
               </li>
             );
           })}
           onClick={() => {
-            let infoWindowLocation = Object.assign(
-              {},
-              restaurant.geometry.location
-            );
+            let infoWindowLocation = Object.assign({}, restaurant.geometry.location);
             infoWindowLocation.lat += 0.002;
             updateInfoWindow({
               open: true,

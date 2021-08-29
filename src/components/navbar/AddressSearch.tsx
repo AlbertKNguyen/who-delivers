@@ -16,7 +16,7 @@ export const AddressSearch = () => {
           lat: Number(address.location.lat),
           lng: Number(address.location.lng),
         };
-        setTempSearchFilters((prevTempSearchFilters) => {
+        setTempSearchFilters(prevTempSearchFilters => {
           return {
             ...prevTempSearchFilters,
             address: { street: address.street, location },
@@ -35,7 +35,7 @@ export const AddressSearch = () => {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       };
-      setTempSearchFilters((prevTempSearchFilters) => {
+      setTempSearchFilters(prevTempSearchFilters => {
         return {
           ...prevTempSearchFilters,
           address: { location, street: place.formatted_address },

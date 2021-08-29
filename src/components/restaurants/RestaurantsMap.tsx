@@ -21,13 +21,7 @@ interface Props {
   updateInfoWindow: (infoWindow: RestaurantInfoWindow) => void;
 }
 
-export const RestaurantsMap = ({
-  style,
-  addressLocation,
-  restaurantList,
-  infoWindow,
-  updateInfoWindow,
-}: Props) => {
+export const RestaurantsMap = ({ style, addressLocation, restaurantList, infoWindow, updateInfoWindow }: Props) => {
   const [center, setCenter] = useState<Location>(addressLocation);
 
   // Center onto address on every search
@@ -39,12 +33,7 @@ export const RestaurantsMap = ({
 
   const renderMap = () => {
     return (
-      <GoogleMap
-        mapContainerStyle={style}
-        center={center}
-        zoom={14}
-        options={mapOptions}
-      >
+      <GoogleMap mapContainerStyle={style} center={center} zoom={14} options={mapOptions}>
         <Marker position={addressLocation} title='Home' />
 
         {restaurantList.map((restaurant, index) => {
@@ -55,10 +44,7 @@ export const RestaurantsMap = ({
                 label={{ text: restaurant.name, fontSize: '12px' }}
                 icon='https://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
                 onClick={() => {
-                  let infoWindowLocation = Object.assign(
-                    {},
-                    restaurant.geometry.location
-                  );
+                  let infoWindowLocation = Object.assign({}, restaurant.geometry.location);
                   infoWindowLocation.lat += 0.002;
                   updateInfoWindow({
                     open: true,
@@ -91,16 +77,8 @@ export const RestaurantsMap = ({
               {infoWindow.name}
               {infoWindow.urls.map((url, index) => {
                 return (
-                  <li
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                    key={index}
-                  >
-                    <a
-                      style={{ display: 'inline' }}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      href={url}
-                    >
+                  <li style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} key={index}>
+                    <a style={{ display: 'inline' }} target='_blank' rel='noopener noreferrer' href={url}>
                       {url}
                     </a>
                   </li>

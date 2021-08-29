@@ -108,7 +108,7 @@ export const RestaurantsContainer = () => {
             // Get urls
             searchResults = await searchResults.reduce(async (promisedResults, place) => {
               if (!errorOccured) {
-                await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 3000)));
+                await new Promise(r => setTimeout(r, Math.floor(Math.random() * 3000)));
 
                 try {
                   const urlList = await getRestaurantsURLs(place.place_id, `${place.name} ${place.formatted_address}`);

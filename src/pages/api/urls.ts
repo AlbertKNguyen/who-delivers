@@ -14,7 +14,7 @@ interface Request {
 const config = {
   headers: {
     'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html',
-    'Referer': 'https://search.yahoo.com/search'
+    Referer: 'https://search.yahoo.com/search',
   },
 };
 
@@ -43,7 +43,7 @@ export default async (req: Request, res) => {
             href = await getRedirectUrl(href);
           }
 
-          // Get possible button url 
+          // Get possible button url
           if (href.includes('locations')) {
             href = await getButtonUrl(href);
           }
@@ -55,7 +55,7 @@ export default async (req: Request, res) => {
             url_list = addToURLList(href, url_list);
           } else if (req.query['allowed_apps[]']) {
             let allowed_apps = req.query['allowed_apps[]'];
-            (typeof allowed_apps === 'string') ? allowed_apps = [allowed_apps] : null;
+            typeof allowed_apps === 'string' ? (allowed_apps = [allowed_apps]) : null;
 
             if (allowed_apps.some(app => href.includes(app))) {
               // Add delivery app url
@@ -76,15 +76,13 @@ export default async (req: Request, res) => {
   }
 };
 
-const getPossibleDeliveryHrefs = ($) => {
+const getPossibleDeliveryHrefs = $ => {
   let hrefs: string[] = [];
 
   $($('a')).each((i, link) => {
     const link_title = $(link).text();
     if (
-      (link_title.includes('Delivery') ||
-        link_title.includes('Order') ||
-        link_title.includes('Website')) &&
+      (link_title.includes('Delivery') || link_title.includes('Order') || link_title.includes('Website')) &&
       $(link).attr('href')
     ) {
       let href = $(link).attr('href');
@@ -106,7 +104,7 @@ const getPossibleDeliveryHrefs = ($) => {
   });
 
   return hrefs;
-}
+};
 
 const addToURLList = (href, url_list) => {
   let website_url: string;
@@ -117,7 +115,7 @@ const addToURLList = (href, url_list) => {
     website_url = href.substr(7, href.indexOf('&sa') - 7);
   }
   return Array.from(new Set([...url_list, website_url]));
-}
+};
 
 const getRedirectUrl = async (href: string) => {
   let url = href;
@@ -128,11 +126,11 @@ const getRedirectUrl = async (href: string) => {
       url = response.request.res.responseUrl;
     }
   } catch (e) {
-    console.log(`Failed to get redirect url: ${e}`)
+    console.log(`Failed to get redirect url: ${e}`);
   }
 
   return url;
-}
+};
 
 const getPossibleButtonUrls = async (url: string) => {
   let hrefs = [];
@@ -146,9 +144,7 @@ const getPossibleButtonUrls = async (url: string) => {
     $(links).each((i, link) => {
       const link_title = $(link).text().toLowerCase();
       if (
-        (link_title === 'order delivery' ||
-          link_title === 'order online' ||
-          link_title === 'order now') &&
+        (link_title === 'order delivery' || link_title === 'order online' || link_title === 'order now') &&
         $(link).attr('href') &&
         $(link).attr('href').includes('http')
       ) {
@@ -157,12 +153,12 @@ const getPossibleButtonUrls = async (url: string) => {
       }
     });
   } catch (e) {
-    console.log(url)
-    console.log(`Failed to get button url: ${e}`)
+    console.log(url);
+    console.log(`Failed to get button url: ${e}`);
   }
 
   return hrefs;
-}
+};
 
 const getButtonUrl = async (url: string) => {
   const hrefs = await getPossibleButtonUrls(url);
@@ -171,4 +167,4 @@ const getButtonUrl = async (url: string) => {
   }
 
   return url;
-}
+};

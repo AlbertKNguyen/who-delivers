@@ -5,7 +5,7 @@ import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvi
 import { AddressSearch } from './AddressSearch';
 import styles from './SearchModal.module.css';
 
-const allowedAppsOptions = [
+const ALLOWED_APPS = [
   { key: 'doordash', text: 'DoorDash', value: 'doordash' },
   { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
   { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
@@ -21,6 +21,7 @@ export const SearchModal = () => {
   const { searchFilters, setSearchFilters } = useSearchFiltersContext();
   const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
 
+  // Set initial value of saveAddress
   useEffect(() => {
     try {
       const address = JSON.parse(window.localStorage.getItem('address'));
@@ -34,7 +35,7 @@ export const SearchModal = () => {
 
   const handleFilterWordChange = useCallback(
     (e, { value }) => {
-      setTempSearchFilters((prevTempSearchFilters) => {
+      setTempSearchFilters(prevTempSearchFilters => {
         return {
           ...prevTempSearchFilters,
           filterWord: value,
@@ -46,7 +47,7 @@ export const SearchModal = () => {
 
   const handleAllowedAppsChange = useCallback(
     (e, { value }) => {
-      setTempSearchFilters((prevTempSearchFilters) => {
+      setTempSearchFilters(prevTempSearchFilters => {
         return {
           ...prevTempSearchFilters,
           allowedApps: value,
@@ -56,7 +57,7 @@ export const SearchModal = () => {
     [tempSearchFilters]
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (tempSearchFilters.address.street) {
       setOpen(false);
       if (JSON.stringify(tempSearchFilters) !== JSON.stringify(searchFilters)) {
@@ -75,7 +76,7 @@ export const SearchModal = () => {
         localStorage.clear();
       }
     }
-  };
+  }, [tempSearchFilters, searchFilters, saveAddress]);
 
   const SearchButton = (
     <div style={{ marginTop: '-7px' }}>
@@ -98,7 +99,7 @@ export const SearchModal = () => {
             label='Address'
             required
             onChange={handleFilterWordChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSubmit();
               }
@@ -122,7 +123,7 @@ export const SearchModal = () => {
             name='filterWord'
             defaultValue={searchFilters.filterWord}
             onChange={handleFilterWordChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSubmit();
               }
@@ -137,7 +138,7 @@ export const SearchModal = () => {
               multiple
               selection
               defaultValue={searchFilters.allowedApps}
-              options={allowedAppsOptions}
+              options={ALLOWED_APPS}
               onChange={handleAllowedAppsChange}
             />
           </Form.Field>
