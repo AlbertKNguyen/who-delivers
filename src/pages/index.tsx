@@ -2,20 +2,11 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { NavBar } from '../components/navbar/NavBar';
 import { RestaurantsContainer } from '../components/restaurants/RestaurantsContainer';
-import React, { useState } from 'react';
-import { SearchFiltersContext } from '../contexts/SearchFiltersContext';
-import { SearchFilters } from '../models/SearchFilters.model';
+import React from 'react';
+import SearchFiltersProvider from '../components/providers/SearchFiltersProvider';
+import TempSearchFiltersProvider from '../components/providers/TempSearchFiltersProvider';
 
 const Home: NextPage = () => {
-  const [searchFilters, setSearchFilters] = useState<SearchFilters | null>({
-    address: {
-      street: null,
-      location: null,
-    },
-    filterWord: '',
-    allowedApps: []
-  });
-
   return (
     <>
       <Head>
@@ -32,10 +23,12 @@ const Home: NextPage = () => {
         ></script>
       </Head>
 
-      <SearchFiltersContext.Provider value={[searchFilters, setSearchFilters]}>
-        <NavBar />
-      </SearchFiltersContext.Provider>
-      <RestaurantsContainer searchFilters={searchFilters}/>
+      <SearchFiltersProvider>
+        <TempSearchFiltersProvider>
+          <NavBar />
+        </TempSearchFiltersProvider>
+        <RestaurantsContainer />
+      </SearchFiltersProvider>
     </>
   );
 };

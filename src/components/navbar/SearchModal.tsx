@@ -1,41 +1,25 @@
-import React, { useCallback, useContext, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Form,
-  Modal,
-  Popup,
-} from 'semantic-ui-react';
-import { SearchFilters } from '../../models/SearchFilters.model';
+import React, { useCallback, useState } from 'react';
+import { Button, Checkbox, Dropdown, Form, Modal, Popup } from 'semantic-ui-react';
+import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
+import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';
 import { AddressSearch } from './AddressSearch';
-import { AddressSearchContext } from '../../contexts/AddressSearchContext';
-import { SearchFiltersContext } from '../../contexts/SearchFiltersContext';
-import styles from './SearchModal.module.css'
+import styles from './SearchModal.module.css';
+
+const allowedAppsOptions = [
+  { key: 'doordash', text: 'DoorDash', value: 'doordash' },
+  { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
+  { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
+  { key: 'postmates', text: 'Postmates', value: 'postmates' },
+  { key: 'caviar', text: 'Caviar', value: 'caviar' },
+  { key: 'seamless', text: 'Seamless', value: 'seamless' },
+  { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
+];
 
 export const SearchModal = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [saveAddress, setSaveAddress] = useState<boolean>(false);
-  const [searchFilters, setSearchFilters] = useContext(SearchFiltersContext);
-
-  const [tempSearchFilters, setTempSearchFilters] = useState<SearchFilters>({
-    address: {
-      street: null,
-      location: null,
-    },
-    filterWord: '',
-    allowedApps: [],
-  });
-
-  const allowedAppsOptions = [
-    { key: 'doordash', text: 'DoorDash', value: 'doordash' },
-    { key: 'grubhub', text: 'Grubhub', value: 'grubhub' },
-    { key: 'ubereats', text: 'Uber Eats', value: 'ubereats' },
-    { key: 'postmates', text: 'Postmates', value: 'postmates' },
-    { key: 'caviar', text: 'Caviar', value: 'caviar' },
-    { key: 'seamless', text: 'Seamless', value: 'seamless' },
-    { key: 'delivery.com', text: 'Delivery.com', value: 'delivery.com' },
-  ];
+  const { searchFilters, setSearchFilters } = useSearchFiltersContext();
+  const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
 
   const handleFilterWordChange = useCallback(
     (e, { value }) => {
@@ -64,7 +48,7 @@ export const SearchModal = () => {
   const handleSubmit = () => {
     if (tempSearchFilters.address.street) {
       setOpen(false);
-      if (JSON.stringify(tempSearchFilters) != JSON.stringify(searchFilters)) {
+      if (JSON.stringify(tempSearchFilters) !== JSON.stringify(searchFilters)) {
         setSearchFilters(tempSearchFilters);
       }
 
@@ -109,11 +93,7 @@ export const SearchModal = () => {
               }
             }}
           >
-            <AddressSearchContext.Provider
-              value={[tempSearchFilters, setTempSearchFilters]}
-            >
-              <AddressSearch />
-            </AddressSearchContext.Provider>
+            <AddressSearch />
           </Form.Input>
           <Form.Field>
             <Checkbox

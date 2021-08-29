@@ -1,18 +1,17 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import { Place } from '../../models/Place.model';
-
-import { AddressSearchContext } from '../../contexts/AddressSearchContext';
+import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';
 
 export const AddressSearch = () => {
-  const [tempSearchFilters, setTempSearchFilters] = useContext(AddressSearchContext);
+  const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
 
-  // Autofill address on modal open
+  // Autofill address on first modal open
   useEffect(() => {
     const localStorage = window.localStorage;
     try {
       const address = JSON.parse(localStorage.getItem('address'));
-      if (address) {
+      if (address && JSON.stringify(address) !== JSON.stringify(tempSearchFilters.address)) {
         const location = {
           lat: Number(address.location.lat),
           lng: Number(address.location.lng),
@@ -20,7 +19,7 @@ export const AddressSearch = () => {
         setTempSearchFilters((prevTempSearchFilters) => {
           return {
             ...prevTempSearchFilters,
-            address: { location, street: address.street },
+            address: { street: address.street, location },
           };
         });
       }

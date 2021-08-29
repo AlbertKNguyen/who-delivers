@@ -17,12 +17,7 @@ export const NavBar = () => {
 
   return (
     <>
-      <Menu
-        fixed='top'
-        pointing
-        secondary
-        style={{ background: 'white', position: 'static', height: '48px' }}
-      >
+      <Menu fixed='top' pointing secondary style={{ background: 'white', position: 'static', height: '48px' }}>
         <Default>
           <Menu.Item as='a' href='/' header position='left'>
             <AppLogo />

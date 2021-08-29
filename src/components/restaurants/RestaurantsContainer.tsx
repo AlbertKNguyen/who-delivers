@@ -7,6 +7,7 @@ import { RestaurantInfoWindow } from '../../models/RestaurantInfoWindow.model';
 import { useMediaQuery } from 'react-responsive';
 import Image from 'next/image';
 import { useSpring, animated } from '@react-spring/web';
+import { useSearchFiltersContext } from '../providers/SearchFiltersProvider';
 const axios = require('axios').default;
 
 const centerStyle = {
@@ -23,11 +24,8 @@ const listStyle = {
   borderLeft: '1px solid black',
 } as React.CSSProperties;
 
-interface Props {
-  searchFilters: SearchFilters;
-}
-
-export const RestaurantsContainer = ({ searchFilters }: Props) => {
+export const RestaurantsContainer = () => {
+  const { searchFilters } = useSearchFiltersContext();
   const [restaurantList, setRestaurantList] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
@@ -108,32 +106,24 @@ export const RestaurantsContainer = ({ searchFilters }: Props) => {
 
             let searchResults = searchResponse.results;
             // Get urls
-            searchResults = await searchResults.reduce(
-              async (promisedResults, place) => {
-                if (!errorOccured) {
-                  await new Promise((r) =>
-                    setTimeout(r, Math.floor(Math.random() * 3000))
-                  );
+            searchResults = await searchResults.reduce(async (promisedResults, place) => {
+              if (!errorOccured) {
+                await new Promise((r) => setTimeout(r, Math.floor(Math.random() * 3000)));
 
-                  try {
-                    const urlList = await getRestaurantsURLs(
-                      place.place_id,
-                      `${place.name} ${place.formatted_address}`
-                    );
+                try {
+                  const urlList = await getRestaurantsURLs(place.place_id, `${place.name} ${place.formatted_address}`);
 
-                    if (urlList.length > 0) {
-                      place.urls = urlList;
-                      (await promisedResults).push(place);
-                    }
-                    return promisedResults;
-                  } catch (error) {
-                    setErrorOccured(true);
-                    return promisedResults;
+                  if (urlList.length > 0) {
+                    place.urls = urlList;
+                    (await promisedResults).push(place);
                   }
+                  return promisedResults;
+                } catch (error) {
+                  setErrorOccured(true);
+                  return promisedResults;
                 }
-              },
-              Promise.resolve([])
-            );
+              }
+            }, Promise.resolve([]));
 
             if (searchResults?.length) {
               // Add to list
