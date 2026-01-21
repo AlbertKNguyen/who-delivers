@@ -1,21 +1,12 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import axios from 'axios-https-proxy-fix';
-
-interface Request {
-  method: string;
-  query: {
-    place_id: string;
-    search: string;
-    'allowed_apps[]'?: string[];
-    key: string;
-  };
-}
 
 const config = {
   headers: {
     'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html',
     Referer: 'https://search.yahoo.com/search',
   },
+  timeout: 10000, // 10 second timeout
 };
 
 const search_engines = [
@@ -25,7 +16,7 @@ const search_engines = [
 ];
 
 // Get all delivery urls of restaurant
-export default async (req: Request, res) => {
+export default async (req, res) => {
   if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
       try {
