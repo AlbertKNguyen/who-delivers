@@ -16,7 +16,7 @@ const ALLOWED_APPS = [
 ];
 
 export const SearchModal = () => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [saveAddress, setSaveAddress] = useState<boolean>(false);
   const { searchFilters, setSearchFilters } = useSearchFiltersContext();
   const { tempSearchFilters, setTempSearchFilters } = useTempSearchFiltersContext();
