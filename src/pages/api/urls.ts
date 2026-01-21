@@ -17,15 +17,11 @@ const search_engines = [
 
 // Get all delivery urls of restaurant
 export default async (req, res) => {
-  console.log('URLs API called:', { method: req.method, hasKey: !!req.query.key, search: req.query.search });
-
   if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
       try {
         const url = encodeURI(`${search_engines[1]}${req.query.search}`);
-        console.log('Fetching URL:', url);
         const { data } = await axios.get(url, config);
-        console.log('Got response, parsing...');
         const $ = cheerio.load(data);
 
         let url_list: string[] = [];
@@ -58,11 +54,10 @@ export default async (req, res) => {
             }
           }
         }
-        console.log('Returning URLs:', url_list);
         res.status(200).json({ urls: url_list });
       } catch (e) {
-        console.error('URLs API Error:', e);
-        res.status(500).json({ message: 'Error when retrieving data', error: String(e) });
+        console.log(`Failed to search restaurant: ${e}`);
+        res.status(500).json({ message: 'Error when retrieving data' });
       }
     } else {
       res.status(400).json({ message: 'invalid_request' });
