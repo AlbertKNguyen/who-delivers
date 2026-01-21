@@ -150,7 +150,7 @@ export const RestaurantsContainer = () => {
 
     return (
       <animated.div style={styles}>
-        <Image src='/arrow-up-sharp.svg' height={100} width={100} />
+        <Image src='/arrow-up-sharp.svg' height={100} width={100} alt='Scroll to top' />
       </animated.div>
     );
   }, []);

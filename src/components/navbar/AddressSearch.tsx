@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import { Place } from '../../models/Place.model';
 import { useTempSearchFiltersContext } from '../providers/TempSearchFiltersProvider';
@@ -45,6 +45,7 @@ export const AddressSearch = () => {
   }, []);
 
   return (
+    // @ts-ignore - react-google-autocomplete types issue with Next.js 12
     <Autocomplete
       apiKey={process.env.GOOGLE_KEY}
       style={{ width: '100%', height: '40px' }}
