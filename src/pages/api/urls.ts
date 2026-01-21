@@ -1,12 +1,12 @@
 import cheerio from 'cheerio';
 import axios from 'axios-https-proxy-fix';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 const config = {
   headers: {
     'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html',
     Referer: 'https://search.yahoo.com/search',
   },
+  timeout: 10000, // 10 second timeout
 };
 
 const search_engines = [
@@ -16,14 +16,11 @@ const search_engines = [
 ];
 
 // Get all delivery urls of restaurant
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { key, search } = req.query;
-  const allowedApps = req.query['allowed_apps[]'];
-
-  if (key === process.env.SECRET_KEY) {
+export default async (req, res) => {
+  if (req.query.key === process.env.SECRET_KEY) {
     if (req.method === 'GET') {
       try {
-        const url = encodeURI(`${search_engines[1]}${search}`);
+        const url = encodeURI(`${search_engines[1]}${req.query.search}`);
         const { data } = await axios.get(url, config);
         const $ = cheerio.load(data);
 
@@ -47,8 +44,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           if (!all_apps.some(app => href.includes(app))) {
             // Add non-delivery app url
             url_list = addToURLList(href, url_list);
-          } else if (allowedApps) {
-            let allowed_apps = allowedApps;
+          } else if (req.query['allowed_apps[]']) {
+            let allowed_apps = req.query['allowed_apps[]'];
             typeof allowed_apps === 'string' ? (allowed_apps = [allowed_apps]) : null;
 
             if (allowed_apps.some(app => href.includes(app))) {
